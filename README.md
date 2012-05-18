@@ -8,6 +8,16 @@ Written in JavaScript, requires [Node.js](http://nodejs.org/) to run.
 
 Depends on the [jParser](https://github.com/vjeux/jParser) module.
 
+# Installation
+
+Use [npm](http://npmjs.org/) to install:
+
+```
+npm install FidoJAM
+```
+
+(The package's name is case-sensitive; it's `FidoJAM`, not lowercase `fidojam`.)
+
 # TODO
 
 * Faster scan time (currently scanning of ≈2 Mb takes ≈5 seconds, see the test).
