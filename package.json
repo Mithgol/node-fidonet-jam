@@ -1,0 +1,11 @@
+{
+"name": "FidoJAM",
+"main": "index.js",
+"version": "0.0.1",
+"description": "Fidonet JAM message base parser",
+"keywords": ["Fidonet", "Fido", "JAM"],
+"author": { "name": "Mithgol the Webmaster" },
+"dependencies": {
+   "jParser": ">=1.0.1"
+}
+}
