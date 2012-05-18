@@ -1,4 +1,4 @@
-var JAM = require('./');
+var JAM = require('../');
 var util = require('util');
 
 console.log( new Date().toLocaleString() );
