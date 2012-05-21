@@ -5,9 +5,6 @@ var util    = require('util');
 var ulong  = 'uint32';
 var ushort = 'uint16';
 
-var NOP = function(){};
-var lastGood = {};
-
 var JAM = function(echotag){
    if (!(this instanceof JAM)) return new JAM(echotag);
 
