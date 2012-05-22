@@ -30,7 +30,7 @@ JAM.prototype.readJHR = function(callback){ // (err)
    });
 }
 
-JAM.prototype.FixedHeaderInfoStruct = function(callback){ // err, struct
+JAM.prototype.ReadHeaders = function(callback){ // err, struct
    this.readJHR(function(err){
       if (err) callback(err);
 
