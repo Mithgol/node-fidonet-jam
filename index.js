@@ -1,6 +1,5 @@
 var fs      = require('fs');
 var jParser = require('jParser');
-var util    = require('util');
 
 var ulong  = 'uint32';
 var ushort = 'uint16';
