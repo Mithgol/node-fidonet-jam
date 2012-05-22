@@ -16,7 +16,13 @@ Use [npm](http://npmjs.org/) to install:
 npm install FidoJAM
 ```
 
-(The package's name is case-sensitive; it's `FidoJAM`, not lowercase `fidojam`.)
+**Notes:**
+
+* The package's name is case-sensitive; it's `FidoJAM`, not lowercase `fidojam`.
+
+* The package may contain a version older than the code in GitHub repository.
+
+* The package does not contain the `test` folder.
 
 # TODO
 
