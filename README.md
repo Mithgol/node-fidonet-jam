@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/Mithgol/node-fidonet-jam.png)](http://travis-ci.org/Mithgol/node-fidonet-jam)
 # Purpose
 
 Reads headers of Fidonet echomail messages from JAM message bases.
