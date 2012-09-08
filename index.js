@@ -3,6 +3,7 @@ var jParser = require('jParser');
 
 var ulong  = 'uint32';
 var ushort = 'uint16';
+var bufJAM = new Buffer('JAM\0');
 
 var JAM = function(echotag){
    if (!(this instanceof JAM)) return new JAM(echotag);
@@ -72,7 +73,8 @@ JAM.prototype.ReadHeaders = function(callback){ // err, struct
       _JAM.readJHR(function(err){
          if (err) callback(err);
 
-         var bufJAM = new Buffer('JAM\0');
+         var indexLen = _JAM.indexStructure.length;
+         var indexNum = 0;
 
          var parser = new jParser(_JAM.JHR, {
             'reserved1000uchar': function(){
@@ -123,7 +125,11 @@ JAM.prototype.ReadHeaders = function(callback){ // err, struct
                */
             },
             'MessageHeader': {
-               'Signature': 'JAM0',
+               'Signature': function(){
+                  this.seek( _JAM.indexStructure[indexNum].offset );
+                  indexNum++;
+                  return this.parse('JAM0');
+               },
                'Revision': ushort,
                'ReservedWord': ushort,
                'SubfieldLen': ulong,
@@ -143,7 +149,7 @@ JAM.prototype.ReadHeaders = function(callback){ // err, struct
                'TxtLen': ulong,
                'PasswordCRC': ulong,
                'Cost': ulong,
-               'Subfields': ['string', function(){ return this.current.SubfieldLen; } ],
+               'Subfields': ['string', function(){ return this.current.SubfieldLen; } ]
                /*
                'Subfields': function(){
                   var final = this.tell() + this.current.SubfieldLen;
@@ -152,11 +158,8 @@ JAM.prototype.ReadHeaders = function(callback){ // err, struct
                      sfArray.push( this.parse('SubField') );
                   }
                   return sfArray;
-               },
-               */
-               'AfterSubfields': function(){
-                  return +this.skipTo(bufJAM);
                }
+               */
             },
             'JHR': {
                'FixedHeader': 'FixedHeaderInfoStruct',
@@ -166,7 +169,7 @@ JAM.prototype.ReadHeaders = function(callback){ // err, struct
                   do {
                      nextMessageHeader = this.parse('MessageHeader');
                      mhArray.push(nextMessageHeader);
-                  } while (nextMessageHeader.AfterSubfields);
+                  } while (indexNum < indexLen);
                   return mhArray;
                }
             }
