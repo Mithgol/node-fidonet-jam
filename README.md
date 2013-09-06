@@ -13,7 +13,7 @@ Depends on the [jParser](https://github.com/vjeux/jParser) module.
 Use [npm](http://npmjs.org/) to install:
 
 ```
-npm install FidoJAM
+npm install fidonet-jam
 ```
 
 **Notes:**
