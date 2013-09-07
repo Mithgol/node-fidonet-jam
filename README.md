@@ -1,41 +1,31 @@
-# Purpose
+The **Fidonet JAM** module reads headers of Fidonet echomail messages from JAM message bases according to JAM (The Joaquim-Andrew-Mats Message Base Proposal) [quoted in Ru.FTN.Develop.](http://groups.google.com/group/fido7.ru.ftn.develop/msg/e2f5486f80394418)
 
-Reads headers of Fidonet echomail messages from JAM message bases.
+The module is written in JavaScript and requires [Node.js](http://nodejs.org/) to run.
 
-# Requirements
+The [jParser](https://github.com/vjeux/jParser) module is also required as a dependency.
 
-Written in JavaScript, requires [Node.js](http://nodejs.org/) to run.
+# Installing Fidonet JAM
 
-Depends on the [jParser](https://github.com/vjeux/jParser) module.
+[![(npm package version)](https://badge.fury.io/js/fidonet-jam.png)](https://npmjs.org/package/fidonet-jam)
 
-# Installation
+* Latest packaged version: `npm install fidonet-jam`
 
-Use [npm](http://npmjs.org/) to install:
+* Latest githubbed version: `npm install https://github.com/Mithgol/node-fidonet-jam/tarball/master`
 
-```
-npm install fidonet-jam
-```
+The npm package does not contain the tests, they're published on GitHub only.
 
-**Notes:**
-
-* The package's name is case-sensitive; it's `FidoJAM`, not lowercase `fidojam`.
-
-* The package may contain a version older than the code in GitHub repository.
-
-* The package does not contain the `test` folder.
+You may visit https://github.com/Mithgol/node-fidonet-jam#readme occasionally to read the latest `README` because the package's version is not planned to grow after changes when they happen in `README` only. (However, `npm publish --force` may happen eventually.)
 
 # TODO
 
-* Faster scan time (currently scanning of ≈2 Mb takes ≈5 seconds, see the test).
+The package's development is still in progress and leaves a lot to be desired:
 
-* Better API.
+* Faster scan time (currently scanning of ≈2 Mb takes ≈5 seconds, see the test). I may drop jParser and deal with the file directly.
+
+* Better API (and documented in README).
 
 * Reading messages (not only headers).
 
-* Support reply trees.
+* Trees of replies.
 
-* Support FGHI.
-
-# See also
-
-* JAM (The Joaquim-Andrew-Mats Message Base Proposal) [quoted in Ru.FTN.Develop](http://groups.google.com/group/fido7.ru.ftn.develop/msg/e2f5486f80394418)
+* [FGHI](https://github.com/Mithgol/FGHI-URL) support.
