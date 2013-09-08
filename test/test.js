@@ -1,14 +1,14 @@
 var JAM = require('../');
 var util = require('util');
 
-console.log( new Date().toLocaleString() );
+console.time('readHeaders');
 
 var blog = JAM('blog-MtW');
 
 blog.ReadHeaders(function(err,data){
    if (err) throw err;
 
-   console.log( new Date().toLocaleString() );
+   console.timeEnd('readHeaders');
    console.log('Read ' + data.MessageHeaders.length + ' message headers.');
    console.log('The last header:');
    console.log(util.inspect(
