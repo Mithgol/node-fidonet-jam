@@ -1,10 +1,10 @@
-/* global describe, it, done */
+/* global describe, it */
 var JAM = require('../');
 var path = require('path');
 var util = require('util');
 
 describe('Fidonet JAM', function(){
-   it('reads the headers from the message base', function(){
+   it('reads the headers from the message base', function(done){
       var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
 
       blog.ReadHeaders(function(err,data){
