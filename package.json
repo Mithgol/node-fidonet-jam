@@ -14,6 +14,6 @@
 },
 "scripts": {
    "pretest": "jshint fidonet-jam.js test/test.js",
-   "test": "mocha -R spec"
+   "test": "mocha --reporter spec --timeout 10s"
 }
 }
