@@ -5,7 +5,7 @@ var util = require('util');
 
 describe('Fidonet JAM', function(){
    it('reads the headers from the message base', function(){
-      var blog = JAM( path.join(__dirname, 'blog-MtW') );
+      var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
 
       blog.ReadHeaders(function(err,data){
          if (err) throw err;
