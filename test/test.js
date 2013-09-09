@@ -1,17 +1,22 @@
+/* global describe, it, done */
 var JAM = require('../');
+var path = require('path');
 var util = require('util');
 
-console.time('readHeaders');
+describe('Fidonet JAM', function(){
+   it('reads the headers from the message base', function(){
+      var blog = JAM( path.join(__dirname, 'blog-MtW') );
 
-var blog = JAM('blog-MtW');
+      blog.ReadHeaders(function(err,data){
+         if (err) throw err;
 
-blog.ReadHeaders(function(err,data){
-   if (err) throw err;
-
-   console.timeEnd('readHeaders');
-   console.log('Read ' + data.MessageHeaders.length + ' message headers.');
-   console.log('The last header:');
-   console.log(util.inspect(
-      data.MessageHeaders[data.MessageHeaders.length-1], false, Infinity, true
-   ));
+         console.log('Read '+data.MessageHeaders.length+' message headers.');
+         console.log('The last header:');
+         console.log(util.inspect(
+            data.MessageHeaders[data.MessageHeaders.length-1],
+            false, Infinity, true
+         ));
+         done();
+      });
+   });
 });

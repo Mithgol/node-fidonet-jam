@@ -13,6 +13,7 @@
    "url": "https://github.com/Mithgol/node-fidonet-jam.git"
 },
 "scripts": {
-   "test": "jshint fidonet-jam.js"
+   "pretest": "jshint fidonet-jam.js test/test.js",
+   "test": "mocha -R spec"
 }
 }
