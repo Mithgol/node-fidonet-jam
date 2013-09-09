@@ -18,6 +18,8 @@ You may visit https://github.com/Mithgol/node-fidonet-jam#readme occasionally to
 
 ## Testing Fidonet JAM
 
+[![(build testing status)](https://travis-ci.org/Mithgol/node-fidonet-jam.png?branch=master)](https://travis-ci.org/Mithgol/node-fidonet-jam)
+
 It is necessary to install [JSHint](http://jshint.com/) for testing.
 
 * You may install JSHint globally (`npm install jshint -g`) or locally (`npm install jshint` in the directory of the Fidonet JAM module).
