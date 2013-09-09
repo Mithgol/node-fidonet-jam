@@ -3,7 +3,6 @@ var jParser = require('jParser');
 
 var ulong  = 'uint32';
 var ushort = 'uint16';
-var bufJAM = new Buffer('JAM\0');
 
 var JAM = function(echotag){
    if (!(this instanceof JAM)) return new JAM(echotag);
@@ -18,7 +17,7 @@ var JAM = function(echotag){
    this.JDT = null;
    this.JLR = null;
    */
-}
+};
 
 JAM.prototype.readJHR = function(callback){ // (err)_JAM
    var _JAM = this;
@@ -30,7 +29,7 @@ JAM.prototype.readJHR = function(callback){ // (err)_JAM
       _JAM.JHR = data;
       callback(null);
    });
-}
+};
 
 JAM.prototype.readJDX = function(callback){ // (err)
    var _JAM = this;
@@ -42,7 +41,7 @@ JAM.prototype.readJDX = function(callback){ // (err)
       _JAM.JDX = data;
       callback(null);
    });
-}
+};
 
 JAM.prototype.ReadHeaders = function(callback){ // err, struct
    var _JAM = this;
@@ -68,7 +67,7 @@ JAM.prototype.ReadHeaders = function(callback){ // err, struct
          }
       });
       _JAM.indexStructure = parser.parse('AllRecords');
-      delete parser;
+      parser = void 0;
 
       _JAM.readJHR(function(err){
          if (err) callback(err);
@@ -95,7 +94,7 @@ JAM.prototype.ReadHeaders = function(callback){ // err, struct
                'LoID':   ushort,
                'HiID':   ushort,
                'datlen': ulong,
-               'Buffer': ['string', function(){ return this.current.datlen }]
+               'Buffer': ['string', function(){ return this.current.datlen; }]
                /*
                'type': function(){
                   switch( this.current.LoID ){
@@ -149,7 +148,9 @@ JAM.prototype.ReadHeaders = function(callback){ // err, struct
                'TxtLen': ulong,
                'PasswordCRC': ulong,
                'Cost': ulong,
-               'Subfields': ['string', function(){ return this.current.SubfieldLen; } ]
+               'Subfields': ['string', function(){
+                  return this.current.SubfieldLen;
+               }]
                /*
                'Subfields': function(){
                   var final = this.tell() + this.current.SubfieldLen;
@@ -178,6 +179,6 @@ JAM.prototype.ReadHeaders = function(callback){ // err, struct
          callback(null, parser.parse('JHR'));
       });
    });
-}
+};
 
 module.exports = JAM;

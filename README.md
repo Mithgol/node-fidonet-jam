@@ -4,7 +4,7 @@ The module is written in JavaScript and requires [Node.js](http://nodejs.org/
 
 The [jParser](https://github.com/vjeux/jParser) module is also required as a dependency.
 
-# Installing Fidonet JAM
+## Installing Fidonet JAM
 
 [![(npm package version)](https://badge.fury.io/js/fidonet-jam.png)](https://npmjs.org/package/fidonet-jam)
 
@@ -16,7 +16,17 @@ The npm package does not contain the tests, they're published on GitHub only.
 
 You may visit https://github.com/Mithgol/node-fidonet-jam#readme occasionally to read the latest `README` because the package's version is not planned to grow after changes when they happen in `README` only. (However, `npm publish --force` may happen eventually.)
 
-# TODO
+## Testing Fidonet JAM
+
+It is necessary to install [JSHint](http://jshint.com/) for testing.
+
+* You may install JSHint globally (`npm install jshint -g`) or locally (`npm install jshint` in the directory of the Fidonet JAM module).
+
+After that you may run `npm test` (in the directory of the Fidonet JAM module) for testing the correctness of JavaScript.
+
+You may also run `node test` in `test/` subdirectory to run a simple performance test.
+
+## TODO
 
 The package's development is still in progress and leaves a lot to be desired:
 
