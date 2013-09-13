@@ -48,26 +48,22 @@ JAM.prototype.ReadHeaders = function(callback){ // err, struct
    _JAM.readJDX(function(err){
       if (err) callback(err);
 
-      var parser = new jParser(_JAM.JDX, {
-         'Record': {
-            'ToCRC':  ulong,
-            'offset': ulong
-         },
-         'AllRecords': function(){
-            var arArray = [];
-            var nextRecord;
-            do {
-               nextRecord = this.parse('Record');
-               if ( (nextRecord.ToCRC !== 0xffffffff) ||
-                    (nextRecord.offset !== 0xffffffff) ) {
-                  arArray.push( nextRecord );
-               }
-            } while (this.tell() < this.view.byteLength );
-            return arArray;
+      var indexOffset = 0;
+      var nextToCRC;  // ulong (4 bytes) 32-bit
+      var nextOffset; // ulong (4 bytes) 32-bit
+      _JAM.indexStructure = [];
+      while( indexOffset + 8 <= _JAM.JDX.length ){
+         nextToCRC = _JAM.JDX.readUInt32LE(indexOffset);
+         indexOffset += 4;
+         nextOffset = _JAM.JDX.readUInt32LE(indexOffset);
+         indexOffset += 4;
+         if( nextToCRC !== 0xffffffff || nextOffset !== 0xffffffff ){
+            _JAM.indexStructure.push({
+               'ToCRC':  nextToCRC,
+               'offset': nextOffset
+            });
          }
-      });
-      _JAM.indexStructure = parser.parse('AllRecords');
-      parser = void 0;
+      }
 
       _JAM.readJHR(function(err){
          if (err) callback(err);
