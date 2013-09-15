@@ -23,7 +23,7 @@ JAM.prototype.readJHR = function(callback){ // (err)_JAM
    var _JAM = this;
    if (_JAM.JHR !== null) callback(null);
 
-   fs.readFile(_JAM.echotag+'.JHR', function (err, data) {
+   fs.readFile(_JAM.echotag+'.jhr', function (err, data) {
       if (err) callback(err);
 
       _JAM.JHR = data;
@@ -35,7 +35,7 @@ JAM.prototype.readJDX = function(callback){ // (err)
    var _JAM = this;
    if (_JAM.JDX !== null) callback(null);
 
-   fs.readFile(_JAM.echotag+'.JDX', function (err, data) {
+   fs.readFile(_JAM.echotag+'.jdx', function (err, data) {
       if (err) callback(err);
 
       _JAM.JDX = data;
