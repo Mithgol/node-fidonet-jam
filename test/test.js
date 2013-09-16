@@ -8,7 +8,7 @@ describe('Fidonet JAM', function(){
    it('reads 8222 headers from the message base', function(done){
       var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
 
-      blog.ReadHeaders(function(err,data){
+      blog.ReadAllHeaders(function(err,data){
          if (err) throw err;
 
          assert.equal(data.MessageHeaders.length, 8222);

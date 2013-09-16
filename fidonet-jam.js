@@ -43,7 +43,7 @@ JAM.prototype.readJDX = function(callback){ // (err)
    });
 };
 
-JAM.prototype.ReadHeaders = function(callback){ // err, struct
+JAM.prototype.ReadAllHeaders = function(callback){ // err, struct
    var _JAM = this;
    _JAM.readJDX(function(err){
       if (err) callback(err);
