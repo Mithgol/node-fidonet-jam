@@ -20,6 +20,8 @@ You may visit https://github.com/Mithgol/node-fidonet-jam#readme occasionally to
 
 [![(build testing status)](https://travis-ci.org/Mithgol/node-fidonet-jam.png?branch=master)](https://travis-ci.org/Mithgol/node-fidonet-jam)
 
+The tests currently contain ≈2 megabytes of input data and thus are not included in the npm package of the module. Use the version from GitHub.
+
 It is necessary to install [Mocha](http://visionmedia.github.io/mocha/) and [JSHint](http://jshint.com/) for testing.
 
 * You may install Mocha globally (`npm install mocha -g`) or locally (`npm install mocha` in the directory of the Fidonet JAM module).
@@ -32,7 +34,9 @@ After that you may run `npm test` (in the directory of the Fidonet JAM modul
 
 The package's development is still in progress and leaves a lot to be desired:
 
-* Faster scan time (currently scanning of ≈2 Mb takes ≈5 seconds, see the test). I may drop jParser and deal with the file directly.
+* Faster scan time (currently scanning of ≈2 Mb takes about a second or a half, see the test). Possible solutions:
+   * Drop jParser and deal with the file directly (through Node.js [Buffers](http://nodejs.org/docs/latest/api/buffer.html)).
+   * Wait for a couple of years for the futher speedups of Node (0.10 is already three times faster than 0.6, compare [that result](https://travis-ci.org/Mithgol/node-fidonet-jam/jobs/11144278) of a test and [that](https://travis-ci.org/Mithgol/node-fidonet-jam/jobs/11144280)).
 
 * Better API (and documented in README).
 
