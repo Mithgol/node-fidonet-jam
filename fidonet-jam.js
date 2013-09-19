@@ -4,10 +4,10 @@ var jParser = require('jParser');
 var ulong  = 'uint32';
 var ushort = 'uint16';
 
-var JAM = function(echotag){
-   if (!(this instanceof JAM)) return new JAM(echotag);
+var JAM = function(echoPath){
+   if (!(this instanceof JAM)) return new JAM(echoPath);
 
-   this.echotag = echotag;
+   this.echoPath = echoPath;
 
    // Buffers:
    this.JHR = null;
@@ -23,7 +23,7 @@ JAM.prototype.readJHR = function(callback){ // (err)_JAM
    var _JAM = this;
    if (_JAM.JHR !== null) callback(null);
 
-   fs.readFile(_JAM.echotag+'.jhr', function (err, data) {
+   fs.readFile(_JAM.echoPath+'.jhr', function (err, data) {
       if (err) callback(err);
 
       _JAM.JHR = data;
@@ -35,7 +35,7 @@ JAM.prototype.readJDX = function(callback){ // (err)
    var _JAM = this;
    if (_JAM.JDX !== null) callback(null);
 
-   fs.readFile(_JAM.echotag+'.jdx', function (err, data) {
+   fs.readFile(_JAM.echoPath+'.jdx', function (err, data) {
       if (err) callback(err);
 
       _JAM.JDX = data;
