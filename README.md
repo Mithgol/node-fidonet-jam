@@ -16,6 +16,21 @@ The npm package does not contain the tests, they're published on GitHub only.
 
 You may visit https://github.com/Mithgol/node-fidonet-jam#readme occasionally to read the latest `README` because the package's version is not planned to grow after changes when they happen in `README` only. (However, `npm publish --force` may happen eventually.)
 
+## Using Fidonet JAM
+
+When you `require()` the installed module, you get a constructor that uses the path to a JAM echo base as its parameter:
+
+```js
+var JAM = require('fidonet-jam');
+var echobase = JAM(basePath);
+```
+
+The constructed object has the following method:
+
+### readAllHeaders(callback)
+
+Asynchronously reads all JAM headers from the base, then calls `callback(err, data)`.
+
 ## Testing Fidonet JAM
 
 [![(build testing status)](https://travis-ci.org/Mithgol/node-fidonet-jam.png?branch=master)](https://travis-ci.org/Mithgol/node-fidonet-jam)
