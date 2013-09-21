@@ -29,7 +29,13 @@ The constructed object has the following method:
 
 ### readAllHeaders(callback)
 
-Asynchronously reads all JAM headers from the base, then calls `callback(err, data)`.
+Asynchronously reads all JAM headers from the base, then calls `callback(err, data)`. That `data` is an object with the following fields:
+
+* `FixedHeader` is the “JAM fixed header” of the echo base.
+
+* `MessageHeaders` is an array containing JAM headers of the individual messages.
+
+Scanning the whole base takes some time. (As tests show, more than a second is necessary to scan even a single echo base containing 8222 messages.)
 
 ## Testing Fidonet JAM
 

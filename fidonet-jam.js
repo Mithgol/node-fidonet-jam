@@ -90,34 +90,35 @@ JAM.prototype.ReadAllHeaders = function(callback){ // err, struct
                'LoID':   ushort,
                'HiID':   ushort,
                'datlen': ulong,
-               'Buffer': ['string', function(){ return this.current.datlen; }]
-               /*
+               'Buffer': ['string', function(){
+                  return this.current.datlen;
+               }],
                'type': function(){
+                  // jshint indent: false
                   switch( this.current.LoID ){
-                     case 0: return 'OADDRESS'; break;
-                     case 1: return 'DADDRESS'; break;
-                     case 2: return 'SENDERNAME'; break;
-                     case 3: return 'RECEIVERNAME'; break;
-                     case 4: return 'MSGID'; break;
-                     case 5: return 'REPLYID'; break;
-                     case 6: return 'SUBJECT'; break;
-                     case 7: return 'PID'; break;
-                     case 8: return 'TRACE'; break;
-                     case 9: return 'ENCLOSEDFILE'; break;
-                     case 10: return 'ENCLOSEDFILEWALIAS'; break;
-                     case 11: return 'ENCLOSEDFREQ'; break;
-                     case 12: return 'ENCLOSEDFILEWCARD'; break;
-                     case 13: return 'ENCLOSEDINDIRECTFILE'; break;
-                     case 1000: return 'EMBINDAT'; break;
-                     case 2000: return 'FTSKLUDGE'; break;
-                     case 2001: return 'SEENBY2D'; break;
-                     case 2002: return 'PATH2D'; break;
-                     case 2003: return 'FLAGS'; break;
-                     case 2004: return 'TZUTCINFO'; break;
-                     default: return 'UNKNOWN'; break;
+                     case 0: return 'OADDRESS'; //break;
+                     case 1: return 'DADDRESS'; //break;
+                     case 2: return 'SENDERNAME'; //break;
+                     case 3: return 'RECEIVERNAME'; //break;
+                     case 4: return 'MSGID'; //break;
+                     case 5: return 'REPLYID'; //break;
+                     case 6: return 'SUBJECT'; //break;
+                     case 7: return 'PID'; //break;
+                     case 8: return 'TRACE'; //break;
+                     case 9: return 'ENCLOSEDFILE'; //break;
+                     case 10: return 'ENCLOSEDFILEWALIAS'; //break;
+                     case 11: return 'ENCLOSEDFREQ'; //break;
+                     case 12: return 'ENCLOSEDFILEWCARD'; //break;
+                     case 13: return 'ENCLOSEDINDIRECTFILE'; //break;
+                     case 1000: return 'EMBINDAT'; //break;
+                     case 2000: return 'FTSKLUDGE'; //break;
+                     case 2001: return 'SEENBY2D'; //break;
+                     case 2002: return 'PATH2D'; //break;
+                     case 2003: return 'FLAGS'; //break;
+                     case 2004: return 'TZUTCINFO'; //break;
+                     default: return 'UNKNOWN'; //break;
                   }
                }
-               */
             },
             'MessageHeader': {
                'Signature': function(){
@@ -144,10 +145,6 @@ JAM.prototype.ReadAllHeaders = function(callback){ // err, struct
                'TxtLen': ulong,
                'PasswordCRC': ulong,
                'Cost': ulong,
-               'Subfields': ['string', function(){
-                  return this.current.SubfieldLen;
-               }]
-               /*
                'Subfields': function(){
                   var final = this.tell() + this.current.SubfieldLen;
                   var sfArray = [];
@@ -156,7 +153,6 @@ JAM.prototype.ReadAllHeaders = function(callback){ // err, struct
                   }
                   return sfArray;
                }
-               */
             },
             'JHR': {
                'FixedHeader': 'FixedHeaderInfoStruct',
