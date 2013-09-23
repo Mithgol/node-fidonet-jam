@@ -2,8 +2,6 @@ The **Fidonet JAM** module reads headers of Fidonet echomail messages from JAM m
 
 The module is written in JavaScript and requires [Node.js](http://nodejs.org/) to run.
 
-The [jParser](https://github.com/vjeux/jParser) module is also required as a dependency.
-
 ## Installing Fidonet JAM
 
 [![(npm package version)](https://badge.fury.io/js/fidonet-jam.png)](https://npmjs.org/package/fidonet-jam)
@@ -35,11 +33,11 @@ Asynchronously reads all JAM headers from the base, then calls `callback(err
 
 * `MessageHeaders` is an array containing JAM headers of the individual messages.
 
-Scanning the whole base takes some time. As tests show, more than a second (or several seconds on an older computer) is necessary to scan even a single echo base containing 8222 messages.
+Scanning the whole base takes some time. As tests show, almost a second (or several seconds on an older computer or older Node.js engine) is necessary to scan even a single echo base containing 8222 messages.
 
 Each of the returned headers has the following structure (the values of the last header in the test JAM base are shown):
 
-![(screenshot)](https://f.cloud.github.com/assets/1088720/1189334/3fe1e264-240c-11e3-9547-dfa8a13abbe4.gif)
+![(screenshot)](https://f.cloud.github.com/assets/1088720/1190661/8bed90ee-243a-11e3-98db-386ff496f5d2.gif)
 
 ## Testing Fidonet JAM
 
@@ -53,15 +51,11 @@ It is necessary to install [Mocha](http://visionmedia.github.io/mocha/) and [JSH
 
 * You may install JSHint globally (`npm install jshint -g`) or locally (`npm install jshint` in the directory of the Fidonet JAM module).
 
-After that you may run `npm test` (in the directory of the Fidonet JAM module) for testing the correctness of JavaScript.
+After that you may run `npm test` (in the directory of the Fidonet JAM module).
 
 ## TODO
 
 The package's development is still in progress and leaves a lot to be desired:
-
-* Faster scan time (currently scanning of ≈2 Mb takes about a second or a half, see the test). Possible solutions:
-   * Drop jParser and deal with the file directly (through Node.js [Buffers](http://nodejs.org/docs/latest/api/buffer.html)).
-   * Wait for a couple of years for the futher speedups of Node (0.10 is already three times faster than 0.6, compare [that result](https://travis-ci.org/Mithgol/node-fidonet-jam/jobs/11144278) of a test and [that](https://travis-ci.org/Mithgol/node-fidonet-jam/jobs/11144280)).
 
 * Better API (and documented in README).
 

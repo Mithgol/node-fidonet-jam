@@ -1,13 +1,10 @@
 {
 "name": "fidonet-jam",
 "main": "fidonet-jam.js",
-"version": "0.2.0",
+"version": "0.3.0",
 "description": "Fidonet JAM message base parser",
 "keywords": ["Fidonet", "Fido", "JAM"],
 "author": { "name": "Mithgol the Webmaster" },
-"dependencies": {
-   "jParser": ">=1.0.1"
-},
 "repository": {
    "type": "git",
    "url": "https://github.com/Mithgol/node-fidonet-jam.git"
