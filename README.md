@@ -35,7 +35,11 @@ Asynchronously reads all JAM headers from the base, then calls `callback(err
 
 * `MessageHeaders` is an array containing JAM headers of the individual messages.
 
-Scanning the whole base takes some time. (As tests show, more than a second is necessary to scan even a single echo base containing 8222 messages.)
+Scanning the whole base takes some time. As tests show, more than a second (or several seconds on an older computer) is necessary to scan even a single echo base containing 8222 messages.
+
+Each of the returned headers has the following structure (the values of the last header in the test JAM base are shown):
+
+![(screenshot)](https://f.cloud.github.com/assets/1088720/1189334/3fe1e264-240c-11e3-9547-dfa8a13abbe4.gif)
 
 ## Testing Fidonet JAM
 
