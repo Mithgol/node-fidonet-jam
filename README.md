@@ -39,6 +39,10 @@ Each of the returned headers has the following structure (the values of the
 
 ![(screenshot)](https://f.cloud.github.com/assets/1088720/1190661/8bed90ee-243a-11e3-98db-386ff496f5d2.gif)
 
+## Locking files
+
+The module does not lock any files and does not create any “lock files” (flag files, semaphore files). The module's caller should control the access to the message base.
+
 ## Testing Fidonet JAM
 
 [![(build testing status)](https://travis-ci.org/Mithgol/node-fidonet-jam.png?branch=master)](https://travis-ci.org/Mithgol/node-fidonet-jam)
