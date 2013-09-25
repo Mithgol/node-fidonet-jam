@@ -11,7 +11,7 @@ describe('Fidonet JAM', function(){
       blog.readJDX(function(err){
          if (err) throw err;
 
-         assert.equal(blog.indexStructure.length, headCount);
+         assert.equal(blog.size(), headCount);
          blog.clearCache();
          assert.equal(blog.indexStructure, null);
 

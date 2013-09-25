@@ -81,6 +81,14 @@ JAM.prototype.readJDX = function(callback){ // (err)
    });
 };
 
+JAM.prototype.size = function(){
+   if( this.indexStructure === null ){
+      return void 0;
+   } else {
+      return this.indexStructure.length;
+   }
+};
+
 JAM.prototype.clearCache = function(){
    this.JHR = null;
    this.indexStructure = null;
