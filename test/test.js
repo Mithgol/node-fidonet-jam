@@ -3,7 +3,7 @@ var JAM = require('../');
 var assert = require('assert');
 var path = require('path');
 var util = require('util');
-var headCount = 8222;
+var headCount = 9151;
 
 describe('Fidonet JAM', function(){
    var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
