@@ -43,6 +43,8 @@ Each of the returned headers has the following structure (the values of the
 
 The module does not lock any files and does not create any “lock files” (flag files, semaphore files). The module's caller should control the access to the message base.
 
+That's because Fidonet software uses different locking methods. For example, GoldED+ uses OS file locking (as seen in its [source code](http://golded-plus.cvs.sourceforge.net/viewvc/golded-plus/golded%2B/goldlib/gall/gfilport.cpp?revision=1.5&view=markup)) and HPT uses a lock file (the file's name is given on the `LockFile` line in the HPT's config). It would complicate the module if it were the module's job to know what locking is necessary.
+
 ## Testing Fidonet JAM
 
 [![(build testing status)](https://travis-ci.org/Mithgol/node-fidonet-jam.png?branch=master)](https://travis-ci.org/Mithgol/node-fidonet-jam)
