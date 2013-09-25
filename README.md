@@ -27,19 +27,25 @@ The constructed object has the following methods:
 
 ### readJHR(callback)
 
-Asynchronously reads the `.jhr` file (JAM headers) into memory, populating the object's `.JHR` field with a raw buffer. Then calls `callback(error)`.
+Asynchronously reads the `.jhr` file (JAM headers) into memory, populating the object's `.JHR` property with a raw buffer. Then calls `callback(error)`.
 
-The data is cached. Subsequent calls to `.readJHR` won't repeat the reading operation unless the object's `.JHR` field is `null`.
+The data is cached. Subsequent calls to `.readJHR` won't repeat the reading operation unless the object's `.JHR` property is `null`.
 
 ### readJDX(callback)
 
-Asynchronously reads the `.jdx` file (JAM index) into memory and parses that index, populating the object's `.indexStructure` field with an array of `{'ToCRC': ..., 'offset': ...}` objects. Then calls `callback(error)`.
+Asynchronously reads the `.jdx` file (JAM index) into memory and parses that index, populating the object's `.indexStructure` property with an array of `{'ToCRC': ..., 'offset': ...}` objects. Then calls `callback(error)`.
 
-The data is cached. Subsequent calls to `.readJDX` won't repeat the reading operation unless the object's `.indexStructure` field is `null`.
+The data is cached. Subsequent calls to `.readJDX` won't repeat the reading operation unless the object's `.indexStructure` property is `null`.
+
+## clearCache()
+
+Writes `null` to the `JHR` and `indexStructure` properties of the object.
+
+The memory cache becomes empty and thus the next `readJHR` or `readJDX` will read the data from the disk again.
 
 ### readAllHeaders(callback)
 
-Asynchronously reads all JAM headers from the base (calling `.readJDX` and `.readJHR` methods in the process) and parses them. Then calls `callback(err, data)`. That `data` is an object with the following fields:
+Asynchronously reads all JAM headers from the base (calling `.readJDX` and `.readJHR` methods in the process) and parses them. Then calls `callback(err, data)`. That `data` is an object with the following properties:
 
 * `FixedHeader` is the “JAM fixed header” of the echo base.
 
