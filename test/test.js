@@ -6,8 +6,9 @@ var util = require('util');
 var headCount = 8222;
 
 describe('Fidonet JAM', function(){
+   var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
+
    it('reads index and can destroy it', function(done){
-      var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
       blog.readJDX(function(err){
          if (err) throw err;
 
@@ -19,8 +20,6 @@ describe('Fidonet JAM', function(){
       });
    });
    it('reads '+headCount+' headers from the message base', function(done){
-      var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
-
       blog.readAllHeaders(function(err,data){
          if (err) throw err;
 
