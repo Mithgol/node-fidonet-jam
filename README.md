@@ -23,11 +23,23 @@ var JAM = require('fidonet-jam');
 var echobase = JAM(basePath);
 ```
 
-The constructed object has the following method:
+The constructed object has the following methods:
+
+### readJHR(callback)
+
+Asynchronously reads the `.jhr` file (JAM headers) into memory, populating the object's `.JHR` field with a raw buffer. Then calls `callback(error)`.
+
+The data is cached. Subsequent calls to `.readJHR` won't repeat the reading operation unless the object's `.JHR` field is `null`.
+
+### readJDX(callback)
+
+Asynchronously reads the `.jdx` file (JAM index) into memory and parses that index, populating the object's `.indexStructure` field with an array of `{'ToCRC': ..., 'offset': ...}` objects. Then calls `callback(error)`.
+
+The data is cached. Subsequent calls to `.readJDX` won't repeat the reading operation unless the object's `.indexStructure` field is `null`.
 
 ### readAllHeaders(callback)
 
-Asynchronously reads all JAM headers from the base, then calls `callback(err, data)`. That `data` is an object with the following fields:
+Asynchronously reads all JAM headers from the base (calling `.readJDX` and `.readJHR` methods in the process) and parses them. Then calls `callback(err, data)`. That `data` is an object with the following fields:
 
 * `FixedHeader` is the “JAM fixed header” of the echo base.
 

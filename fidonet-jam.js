@@ -34,7 +34,6 @@ var JAM = function(echoPath){
 
    // Buffers:
    this.JHR = null;
-   this.JDX = null;
    this.indexStructure = null;
    /*
    this.JDT = null;
@@ -56,29 +55,19 @@ JAM.prototype.readJHR = function(callback){ // (err)_JAM
 
 JAM.prototype.readJDX = function(callback){ // (err)
    var _JAM = this;
-   if (_JAM.JDX !== null) callback(null);
+   if (_JAM.indexStructure !== null) callback(null);
 
    fs.readFile(_JAM.echoPath+'.jdx', function (err, data) {
-      if (err) callback(err);
-
-      _JAM.JDX = data;
-      callback(null);
-   });
-};
-
-JAM.prototype.ReadAllHeaders = function(callback){ // err, struct
-   var _JAM = this;
-   _JAM.readJDX(function(err){
       if (err) callback(err);
 
       var indexOffset = 0;
       var nextToCRC;  // ulong (4 bytes) 32-bit
       var nextOffset; // ulong (4 bytes) 32-bit
       _JAM.indexStructure = [];
-      while( indexOffset + 8 <= _JAM.JDX.length ){
-         nextToCRC = _JAM.JDX.readUInt32LE(indexOffset);
+      while( indexOffset + 8 <= data.length ){
+         nextToCRC = data.readUInt32LE(indexOffset);
          indexOffset += 4;
-         nextOffset = _JAM.JDX.readUInt32LE(indexOffset);
+         nextOffset = data.readUInt32LE(indexOffset);
          indexOffset += 4;
          if( nextToCRC !== 0xffffffff || nextOffset !== 0xffffffff ){
             _JAM.indexStructure.push({
@@ -87,6 +76,15 @@ JAM.prototype.ReadAllHeaders = function(callback){ // err, struct
             });
          }
       }
+
+      callback(null);
+   });
+};
+
+JAM.prototype.ReadAllHeaders = function(callback){ // err, struct
+   var _JAM = this;
+   _JAM.readJDX(function(err){
+      if (err) callback(err);
 
       _JAM.readJHR(function(err){
          if (err) callback(err);
