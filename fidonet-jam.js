@@ -41,7 +41,7 @@ var JAM = function(echoPath){
    */
 };
 
-JAM.prototype.readJHR = function(callback){ // (err)_JAM
+JAM.prototype.readJHR = function(callback){ // (err)
    var _JAM = this;
    if (_JAM.JHR !== null) callback(null);
 
