@@ -37,11 +37,11 @@ Asynchronously reads the `.jdx` file (JAM index) into memory and parses that 
 
 The data is cached. Subsequent calls to `.readJDX` won't repeat the reading operation unless the object's `.indexStructure` property is `null`.
 
-## size()
+### size()
 
 Returns `.indexStructure.length` property (or `undefined` when `.indexStructure` is `null`).
 
-## clearCache()
+### clearCache()
 
 Writes `null` to the `JHR` and `indexStructure` properties of the object.
 
