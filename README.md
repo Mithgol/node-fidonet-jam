@@ -47,11 +47,33 @@ Writes `null` to the `JHR` and `indexStructure` properties of the object.
 
 The memory cache becomes empty and thus the next `readJHR` or `readJDX` will read the data from the disk again.
 
+### readFixedHeaderInfoStruct(callback)
+
+Asynchronously reads the “JAM fixed header” of the echo base (calling `.readJHR` method in the process).
+
+Then calls `callback(error, data)`. That `data` is an object with the following properties:
+
+* `Signature` is a four-bytes Buffer (should contain `'JAM\0'`).
+
+* `datecreated` is the (32 bit) creation date of the base.
+
+* `modcounter` is the (32 bit) counter that (according to the JAM specifications) must be incremented and updated on disk each time an application modifies the contents of the message base. (When it reaches `0xffffffff`, it wraps to zero.)
+
+* `activemsgs` is the (32 bit) number of active (i.e. not deleted) messages in the base.
+
+* `passwordcrc` is the (32 bit) CRC-32 of a password to access.
+
+* `basemsgnum` is the (32 bit) lowest message number in the index file.
+
+According to the JAM specifications, the `basemsgnum` property determines the lowest message number in the index file. The value for this field is one (`1`) when a message area is first created. By using this property, a message area can be packed (when deleted messages are removed) without renumbering it. For example, if BaseMsgNum contains `500`, then the first index record points to message number 500.
+
+This property has to be taken into account when an application calculates the next available message number (for creating new messages) as well as the highest and lowest message number in a message area.
+
 ### readAllHeaders(callback)
 
-Asynchronously reads all JAM headers from the base (calling `.readJDX` and `.readJHR` methods in the process) and parses them. Then calls `callback(err, data)`. That `data` is an object with the following properties:
+Asynchronously reads all JAM headers from the base (calling `.readJDX` and `.readJHR` methods in the process) and parses them. Then calls `callback(error, data)`. That `data` is an object with the following properties:
 
-* `FixedHeader` is the “JAM fixed header” of the echo base.
+* `FixedHeader` is the header asynchronously read by the `.readFixedHeaderInfoStruct()` method.
 
 * `MessageHeaders` is an array containing JAM headers of the individual messages.
 

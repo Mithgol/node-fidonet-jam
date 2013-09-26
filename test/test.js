@@ -19,14 +19,25 @@ describe('Fidonet JAM', function(){
          done();
       });
    });
+   it('reads the fixed header', function(done){
+      blog.readFixedHeaderInfoStruct(function(err, FixedHeaderInfoStruct){
+         if (err) throw err;
+
+         assert.equal(FixedHeaderInfoStruct.activemsgs, headCount);
+         console.log('The fixed header:');
+         console.log(util.inspect(FixedHeaderInfoStruct,
+            false, Infinity, true
+         ));
+         done();
+      });
+   });
    it('reads '+headCount+' headers from the message base', function(done){
       blog.readAllHeaders(function(err,data){
          if (err) throw err;
 
          assert.equal(data.MessageHeaders.length, headCount);
-         console.log('The last header:');
-         console.log(util.inspect(
-            data.MessageHeaders[data.MessageHeaders.length-1],
+         console.log('The 8222nd header:');
+         console.log(util.inspect(data.MessageHeaders[8221],
             false, Infinity, true
          ));
          done();

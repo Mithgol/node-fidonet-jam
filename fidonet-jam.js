@@ -94,6 +94,43 @@ JAM.prototype.clearCache = function(){
    this.indexStructure = null;
 };
 
+JAM.prototype.readFixedHeaderInfoStruct = function(callback){ // err, struct
+   var _JAM = this;
+
+   _JAM.readJHR(function(err){
+      if (err) callback(err);
+
+      var offsetJHR = 0;
+      var FixedHeaderInfoStruct = {};
+
+      FixedHeaderInfoStruct.Signature = new Buffer(4);
+      _JAM.JHR.copy(FixedHeaderInfoStruct.Signature, 0, 0, 4);
+      offsetJHR += 4;
+
+      FixedHeaderInfoStruct.datecreated =
+         _JAM.JHR.readUInt32LE(offsetJHR); //ulong
+      offsetJHR += 4;
+
+      FixedHeaderInfoStruct.modcounter =
+         _JAM.JHR.readUInt32LE(offsetJHR); //ulong
+      offsetJHR += 4;
+
+      FixedHeaderInfoStruct.activemsgs =
+         _JAM.JHR.readUInt32LE(offsetJHR); //ulong
+      offsetJHR += 4;
+
+      FixedHeaderInfoStruct.passwordcrc =
+         _JAM.JHR.readUInt32LE(offsetJHR); //ulong
+      offsetJHR += 4;
+
+      FixedHeaderInfoStruct.basemsgnum =
+         _JAM.JHR.readUInt32LE(offsetJHR); //ulong
+      //offsetJHR += 4;
+
+      callback(null, FixedHeaderInfoStruct);
+   });
+};
+
 JAM.prototype.readAllHeaders = function(callback){ // err, struct
    var _JAM = this;
    _JAM.readJDX(function(err){
@@ -102,116 +139,92 @@ JAM.prototype.readAllHeaders = function(callback){ // err, struct
       _JAM.readJHR(function(err){
          if (err) callback(err);
 
-         var offsetJHR = 0;
-         var structure = {
-            'FixedHeaderInfoStruct': {},
-            'MessageHeaders': []
-         };
+         _JAM.readFixedHeaderInfoStruct(function(err, FixedHeaderInfoStruct){
+            if (err) callback(err);
 
-         // populate FixedHeaderInfoStruct
+            var offsetJHR = 0;
+            var structure = {
+               'FixedHeaderInfoStruct': FixedHeaderInfoStruct,
+               'MessageHeaders': []
+            };
 
-         structure.FixedHeaderInfoStruct.Signature = new Buffer(4);
-         _JAM.JHR.copy(structure.FixedHeaderInfoStruct.Signature, 0, 0, 4);
-         offsetJHR += 4;
+            var indexLen = _JAM.indexStructure.length;
+            for( var indexNum = 0; indexNum < indexLen; indexNum++ ){
+               var nextHeader = {};
+               offsetJHR = _JAM.indexStructure[indexNum].offset;
 
-         structure.FixedHeaderInfoStruct.datecreated =
-            _JAM.JHR.readUInt32LE(offsetJHR); //ulong
-         offsetJHR += 4;
+               nextHeader.Signature = new Buffer(4);
+               _JAM.JHR.copy(nextHeader.Signature, 0, offsetJHR, offsetJHR+4);
+               offsetJHR += 4;
 
-         structure.FixedHeaderInfoStruct.modcounter =
-            _JAM.JHR.readUInt32LE(offsetJHR); //ulong
-         offsetJHR += 4;
-
-         structure.FixedHeaderInfoStruct.activemsgs =
-            _JAM.JHR.readUInt32LE(offsetJHR); //ulong
-         offsetJHR += 4;
-
-         structure.FixedHeaderInfoStruct.passwordcrc =
-            _JAM.JHR.readUInt32LE(offsetJHR); //ulong
-         offsetJHR += 4;
-
-         structure.FixedHeaderInfoStruct.basemsgnum =
-            _JAM.JHR.readUInt32LE(offsetJHR); //ulong
-         offsetJHR += 4;
-
-         offsetJHR += 1000; // skip RESERVED 1000 uchar
-
-         var indexLen = _JAM.indexStructure.length;
-         for( var indexNum = 0; indexNum < indexLen; indexNum++ ){
-            var nextHeader = {};
-            offsetJHR = _JAM.indexStructure[indexNum].offset;
-
-            nextHeader.Signature = new Buffer(4);
-            _JAM.JHR.copy(nextHeader.Signature, 0, offsetJHR, offsetJHR+4);
-            offsetJHR += 4;
-
-            nextHeader.Revision = _JAM.JHR.readUInt16LE(offsetJHR);
-            offsetJHR += 2; //ushort
-            nextHeader.ReservedWord = _JAM.JHR.readUInt16LE(offsetJHR);
-            offsetJHR += 2; //ushort
-
-            nextHeader.SubfieldLen = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.TimesRead = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.MSGIDcrc = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.REPLYcrc = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.ReplyTo = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.Reply1st = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.Replynext = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.DateWritten = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.DateReceived = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.DateProcessed = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.MessageNumber = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.Attribute = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.Attribute2 = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.Offset = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.TxtLen = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.PasswordCRC = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-            nextHeader.Cost = _JAM.JHR.readUInt32LE(offsetJHR);
-            offsetJHR += 4; //ulong
-
-            nextHeader.Subfields = [];
-            var preSubfields = offsetJHR;
-            while( offsetJHR - preSubfields < nextHeader.SubfieldLen ){
-               var subfield = {};
-
-               subfield.LoID = _JAM.JHR.readUInt16LE(offsetJHR);
+               nextHeader.Revision = _JAM.JHR.readUInt16LE(offsetJHR);
                offsetJHR += 2; //ushort
-               subfield.HiID = _JAM.JHR.readUInt16LE(offsetJHR);
+               nextHeader.ReservedWord = _JAM.JHR.readUInt16LE(offsetJHR);
                offsetJHR += 2; //ushort
-               subfield.datlen = _JAM.JHR.readUInt32LE(offsetJHR);
+
+               nextHeader.SubfieldLen = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.TimesRead = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.MSGIDcrc = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.REPLYcrc = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.ReplyTo = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.Reply1st = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.Replynext = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.DateWritten = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.DateReceived = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.DateProcessed = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.MessageNumber = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.Attribute = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.Attribute2 = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.Offset = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.TxtLen = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.PasswordCRC = _JAM.JHR.readUInt32LE(offsetJHR);
+               offsetJHR += 4; //ulong
+               nextHeader.Cost = _JAM.JHR.readUInt32LE(offsetJHR);
                offsetJHR += 4; //ulong
 
-               subfield.Buffer = new Buffer(subfield.datlen);
-               _JAM.JHR.copy(
-                  subfield.Buffer, 0, offsetJHR, offsetJHR+subfield.datlen
-               );
-               offsetJHR += subfield.datlen;
+               nextHeader.Subfields = [];
+               var preSubfields = offsetJHR;
+               while( offsetJHR - preSubfields < nextHeader.SubfieldLen ){
+                  var subfield = {};
 
-               subfield.type = getSubfieldTypeFromLoID( subfield.LoID );
+                  subfield.LoID = _JAM.JHR.readUInt16LE(offsetJHR);
+                  offsetJHR += 2; //ushort
+                  subfield.HiID = _JAM.JHR.readUInt16LE(offsetJHR);
+                  offsetJHR += 2; //ushort
+                  subfield.datlen = _JAM.JHR.readUInt32LE(offsetJHR);
+                  offsetJHR += 4; //ulong
 
-               nextHeader.Subfields.push( subfield );
+                  subfield.Buffer = new Buffer(subfield.datlen);
+                  _JAM.JHR.copy(
+                     subfield.Buffer, 0, offsetJHR, offsetJHR+subfield.datlen
+                  );
+                  offsetJHR += subfield.datlen;
+
+                  subfield.type = getSubfieldTypeFromLoID( subfield.LoID );
+
+                  nextHeader.Subfields.push( subfield );
+               }
+
+               structure.MessageHeaders.push( nextHeader );
             }
 
-            structure.MessageHeaders.push( nextHeader );
-         }
-
-         callback(null, structure);
+            callback(null, structure);
+         });
       });
    });
 };
