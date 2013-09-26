@@ -1,7 +1,7 @@
 {
 "name": "fidonet-jam",
 "main": "fidonet-jam.js",
-"version": "0.5.1",
+"version": "0.5.2",
 "description": "Fidonet JAM message base parser",
 "keywords": ["Fidonet", "Fido", "JAM"],
 "author": { "name": "Mithgol the Webmaster" },
@@ -11,6 +11,6 @@
 },
 "scripts": {
    "pretest": "jshint fidonet-jam.js test/test.js",
-   "test": "mocha --reporter spec --timeout 10s"
+   "test": "mocha --reporter spec --timeout 60s"
 }
 }

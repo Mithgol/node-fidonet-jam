@@ -131,6 +131,96 @@ JAM.prototype.readFixedHeaderInfoStruct = function(callback){ // err, struct
    });
 };
 
+JAM.prototype.readHeader = function(number, callback){ // err, struct
+   var _JAM = this;
+   if( number <= 0 ){
+      return callback(new Error(this.errors.NOT_A_POSITIVE));
+   }
+
+   _JAM.readJDX(function(err){
+      if (err) return callback(err);
+      if( number > _JAM.size() ){
+         return callback(new Error(this.errors.TOO_BIG));
+      }
+
+      _JAM.readJHR(function(err){
+         if (err) return callback(err);
+
+         var header = {};
+         var offsetJHR = _JAM.indexStructure[number-1].offset;
+
+         header.Signature = new Buffer(4);
+         _JAM.JHR.copy(header.Signature, 0, offsetJHR, offsetJHR+4);
+         offsetJHR += 4;
+
+         header.Revision = _JAM.JHR.readUInt16LE(offsetJHR);
+         offsetJHR += 2; //ushort
+         header.ReservedWord = _JAM.JHR.readUInt16LE(offsetJHR);
+         offsetJHR += 2; //ushort
+
+         header.SubfieldLen = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.TimesRead = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.MSGIDcrc = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.REPLYcrc = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.ReplyTo = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.Reply1st = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.Replynext = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.DateWritten = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.DateReceived = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.DateProcessed = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.MessageNumber = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.Attribute = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.Attribute2 = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.Offset = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.TxtLen = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.PasswordCRC = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+         header.Cost = _JAM.JHR.readUInt32LE(offsetJHR);
+         offsetJHR += 4; //ulong
+
+         header.Subfields = [];
+         var preSubfields = offsetJHR;
+         while( offsetJHR - preSubfields < header.SubfieldLen ){
+            var subfield = {};
+
+            subfield.LoID = _JAM.JHR.readUInt16LE(offsetJHR);
+            offsetJHR += 2; //ushort
+            subfield.HiID = _JAM.JHR.readUInt16LE(offsetJHR);
+            offsetJHR += 2; //ushort
+            subfield.datlen = _JAM.JHR.readUInt32LE(offsetJHR);
+            offsetJHR += 4; //ulong
+
+            subfield.Buffer = new Buffer(subfield.datlen);
+            _JAM.JHR.copy(
+               subfield.Buffer, 0, offsetJHR, offsetJHR+subfield.datlen
+            );
+            offsetJHR += subfield.datlen;
+
+            subfield.type = getSubfieldTypeFromLoID( subfield.LoID );
+
+            header.Subfields.push( subfield );
+         }
+
+         callback(null, header );
+      });
+   });
+};
+
 JAM.prototype.readAllHeaders = function(callback){ // err, struct
    var _JAM = this;
    _JAM.readJDX(function(err){
@@ -142,91 +232,38 @@ JAM.prototype.readAllHeaders = function(callback){ // err, struct
          _JAM.readFixedHeaderInfoStruct(function(err, FixedHeaderInfoStruct){
             if (err) return callback(err);
 
-            var offsetJHR = 0;
             var structure = {
                'FixedHeaderInfoStruct': FixedHeaderInfoStruct,
                'MessageHeaders': []
             };
+            var nextHeaderNumber = 0;
+            var baseSize = _JAM.size();
+            var nextStep = setImmediate || process.nextTick;
 
-            var indexLen = _JAM.indexStructure.length;
-            for( var indexNum = 0; indexNum < indexLen; indexNum++ ){
-               var nextHeader = {};
-               offsetJHR = _JAM.indexStructure[indexNum].offset;
-
-               nextHeader.Signature = new Buffer(4);
-               _JAM.JHR.copy(nextHeader.Signature, 0, offsetJHR, offsetJHR+4);
-               offsetJHR += 4;
-
-               nextHeader.Revision = _JAM.JHR.readUInt16LE(offsetJHR);
-               offsetJHR += 2; //ushort
-               nextHeader.ReservedWord = _JAM.JHR.readUInt16LE(offsetJHR);
-               offsetJHR += 2; //ushort
-
-               nextHeader.SubfieldLen = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.TimesRead = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.MSGIDcrc = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.REPLYcrc = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.ReplyTo = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.Reply1st = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.Replynext = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.DateWritten = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.DateReceived = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.DateProcessed = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.MessageNumber = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.Attribute = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.Attribute2 = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.Offset = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.TxtLen = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.PasswordCRC = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-               nextHeader.Cost = _JAM.JHR.readUInt32LE(offsetJHR);
-               offsetJHR += 4; //ulong
-
-               nextHeader.Subfields = [];
-               var preSubfields = offsetJHR;
-               while( offsetJHR - preSubfields < nextHeader.SubfieldLen ){
-                  var subfield = {};
-
-                  subfield.LoID = _JAM.JHR.readUInt16LE(offsetJHR);
-                  offsetJHR += 2; //ushort
-                  subfield.HiID = _JAM.JHR.readUInt16LE(offsetJHR);
-                  offsetJHR += 2; //ushort
-                  subfield.datlen = _JAM.JHR.readUInt32LE(offsetJHR);
-                  offsetJHR += 4; //ulong
-
-                  subfield.Buffer = new Buffer(subfield.datlen);
-                  _JAM.JHR.copy(
-                     subfield.Buffer, 0, offsetJHR, offsetJHR+subfield.datlen
-                  );
-                  offsetJHR += subfield.datlen;
-
-                  subfield.type = getSubfieldTypeFromLoID( subfield.LoID );
-
-                  nextHeader.Subfields.push( subfield );
+            var nextHeaderProcessor = function(){
+               if( nextHeaderNumber >= baseSize ){
+                  // all headers are processed
+                  return callback(null, structure);
                }
+               // process the next header
+               nextHeaderNumber++;
+               _JAM.readHeader(nextHeaderNumber, function(err, nextHeader){
+                  if(err) return callback(err);
 
-               structure.MessageHeaders.push( nextHeader );
-            }
+                  structure.MessageHeaders.push( nextHeader );
+                  nextStep(nextHeaderProcessor);
+               });
+            };
 
-            callback(null, structure);
+            nextHeaderProcessor();
          });
       });
    });
+};
+
+JAM.prototype.errors = {
+   NOT_A_POSITIVE: "The message's number must be positive!",
+   TOO_BIG: "The message's number exceed the message base's size!"
 };
 
 module.exports = JAM;

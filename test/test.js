@@ -31,15 +31,25 @@ describe('Fidonet JAM', function(){
          done();
       });
    });
+   it('reads the 8222nd header from the message base', function(done){
+      blog.readHeader(8222, function(err,header){
+         if (err) throw err;
+
+         console.log('The 8222th header:');
+         console.log( util.inspect(header, false, Infinity, true) );
+
+         assert.deepEqual(
+            header.Subfields[4].Buffer,
+            new Buffer('323a353036332f3838203530346233666235', 'hex')
+         );
+         done();
+      });
+   });
    it('reads '+headCount+' headers from the message base', function(done){
       blog.readAllHeaders(function(err,data){
          if (err) throw err;
 
          assert.equal(data.MessageHeaders.length, headCount);
-         console.log('The 8222nd header:');
-         console.log(util.inspect(data.MessageHeaders[8221],
-            false, Infinity, true
-         ));
          done();
       });
    });

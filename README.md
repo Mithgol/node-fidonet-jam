@@ -69,19 +69,90 @@ According to the JAM specifications, the `basemsgnum` property determines the�
 
 This property has to be taken into account when an application calculates the next available message number (for creating new messages) as well as the highest and lowest message number in a message area.
 
-### readAllHeaders(callback)
+### readHeader(number, callback)
 
-Asynchronously reads all JAM headers from the base (calling `.readJDX` and `.readJHR` methods in the process) and parses them. Then calls `callback(error, data)`. That `data` is an object with the following properties:
+Asynchronously reads a JAM header by its number (calling `.readJDX` and `.readJHR` methods in the process).
 
-* `FixedHeader` is the header asynchronously read by the `.readFixedHeaderInfoStruct()` method.
+The headers are treated as numbered from (and including) `1` to (and including) `.size()`, i.e. the `basemsgnum` (see above) is ignored. If the given number is below zero or above `.size()`, then `callback(new Error(…))` is called (see the error codes in the bottom of `fidonet-jam.js`).
 
-* `MessageHeaders` is an array containing JAM headers of the individual messages.
+The callback has the form `callback(error, header)`. That `header` has the following structure:
 
-Scanning the whole base takes some time. As tests show, almost a second (or several seconds on an older computer or older Node.js engine) is necessary to scan even a single echo base containing 8222 messages.
+* `Signature` is a four-bytes Buffer (should contain `'JAM\0'`).
 
-Each of the returned headers has the following structure (the values of the last header in the test JAM base are shown):
+* `Revision` is the (16 bit) revision level of the header (`1` in the known JAM specification).
+
+* `ReservedWord` is the (16 bit) value reserved for some future use.
+
+* `SubfieldLen` is the (32 bit) length of the `Subfields` data (see below), given in bytes.
+
+* `TimesRead` is the (32 bit) number of times the message was read.
+
+* `MSGIDcrc` and `REPLYcrc` are the (32 bit) CRC-32 values of the MSGID and REPLY lines of the message.
+
+* `ReplyTo`, `Reply1st` and `Replynext` are the (32 bit) values that are used in saving the tree of replies to a message (as seen in the bottom of the JAM specs).
+
+* `DateWritten`, `DateReceived` and `DateProcessed` are the (32 bit) timestamps of the moments when the message was written, received and processed by a tosser (or a scanner).
+
+* `MessageNumber` is the (32 bit, 1-based) number of the message. Should be equal to the `number` parameter given to the `.readHeader` method (though can be different, because `.readHeader` uses the message's position in `.indexStructure` instead of scanning the headers).
+
+* `Attribute` is the (32 bit) bitfield containing the message's attributes.
+
+* `Attribute2` is the (32 bit) value reserved for some future use.
+
+* `Offset` and `TxtLen` are the (32 bit) offset and length of the message's text in the `.jdt` file.
+
+* `PasswordCRC` is the (32 bit) CRC-32 values of the password necessary to access the message.
+
+* `Cost` is the (32 bit) cost value of the message.
+
+* `Subfields` is an array of message's fields. Each of its elements is an object that has the following structure:
+   * `LoID` is the (16 bit) identifier of the field's type.
+   * `HiID` is the (16 bit) value reserved for some future use.
+   * `datlen` is the (32 bit) length of the field.
+   * `Buffer` is the Node.js Buffer containing the field's data.
+   * `type` is the JavaScript string corresponing to the value of `LoID` (i.e. containing the field's type).
+
+The following `LoID / type` pairs are possible:
+
+* `0 / 'OADDRESS'` — The network address of the message's origin.
+* `1 / 'DADDRESS'` — The network address of the message's destination.
+* `2 / 'SENDERNAME'` — The sender (author) of the message.
+* `3 / 'RECEIVERNAME'` — The recepient of the message.
+* `4 / 'MSGID'` — The ID of the message.
+* `5 / 'REPLYID'` — If the message is a reply to some other message, contains the MSGID of that message.
+* `6 / 'SUBJECT'` — The subject of the message.
+* `7 / 'PID'` — The PID of the program that generated the message.
+* `8 / 'TRACE'` — Information about a system which the message has travelled through.
+* `9 / 'ENCLOSEDFILE'` — A name of a file attached to the message.
+* `10 / 'ENCLOSEDFILEWALIAS'` — Same as `'ENCLOSEDFILE'`, but the filename is followed by `\0` and intended to be transmited to the remote system in place of the local name of the file.
+* `11 / 'ENCLOSEDFREQ'` — A request for one or more files.
+* `12 / 'ENCLOSEDFILEWCARD'` — Same as `'ENCLOSEDFILE'`, but may contain wildcards.
+* `13 / 'ENCLOSEDINDIRECTFILE'` — Same as `'ENCLOSEDFILE'`, but indirectly (the filename points to an ASCII file containing one filename entry per line).
+* `1000 / 'EMBINDAT'` — Reserved for some future use.
+* `2000 / 'FTSKLUDGE'` — FTS-compliant “kludge” line (not otherwise represented here).
+* `2001 / 'SEENBY2D'` — Two-dimensional (`net/node`) SEEN-BY information.
+* `2002 / 'PATH2D'` — Two-dimensional (`net/node`) PATH information.
+* `2003 / 'FLAGS'` — FTN `FLAGS` kludge (stripped from the flags that have binary representation in the JAM message header).
+* `2004 / 'TZUTCINFO'` — Time zone information in `+HHmm` or `-HHmm` form (for example, `-0400`) where `+` may be omitted.
+* `other / 'UNKNOWN'` — A value not documented in the JAM documentation.
+
+The above description of possible `type` values is abridged (you may read the JAM documentation for details).
+
+Here's a header's screenshot for example:
 
 ![(screenshot)](https://f.cloud.github.com/assets/1088720/1190661/8bed90ee-243a-11e3-98db-386ff496f5d2.gif)
+
+### readAllHeaders(callback)
+
+Asynchronously reads all JAM headers from the base (calling `.readJDX` and `.readJHR`, `.readFixedHeaderInfoStruct` and `.readHeader` methods in the process). Then calls `callback(error, data)`. That `data` is an object with the following properties:
+
+* `FixedHeader` is the header asynchronously read by the `.readFixedHeaderInfoStruct` method.
+
+* `MessageHeaders` is an array containing JAM headers of the individual messages as returned by `.readHeader`.
+
+**Note 1: ** as in any other JavaScript array, the indexes of `MessageHeaders` are 0-based, while the `number` parameter of `.readHeader` and the `.MessageNumber` property of the header are 1-based.
+
+**Note 2: ** scanning of the whole base takes some time. As tests show, almost a second (or several seconds on an older computer or older Node.js engine) is necessary to scan even a single echo base containing 8222 messages.
 
 ## Locking files
 
