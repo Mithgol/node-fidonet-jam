@@ -43,10 +43,10 @@ var JAM = function(echoPath){
 
 JAM.prototype.readJHR = function(callback){ // (err)
    var _JAM = this;
-   if (_JAM.JHR !== null) callback(null);
+   if (_JAM.JHR !== null) return callback(null);
 
    fs.readFile(_JAM.echoPath+'.jhr', function (err, data) {
-      if (err) callback(err);
+      if (err) return callback(err);
 
       _JAM.JHR = data;
       callback(null);
@@ -55,10 +55,10 @@ JAM.prototype.readJHR = function(callback){ // (err)
 
 JAM.prototype.readJDX = function(callback){ // (err)
    var _JAM = this;
-   if (_JAM.indexStructure !== null) callback(null);
+   if (_JAM.indexStructure !== null) return callback(null);
 
    fs.readFile(_JAM.echoPath+'.jdx', function (err, data) {
-      if (err) callback(err);
+      if (err) return callback(err);
 
       var indexOffset = 0;
       var nextToCRC;  // ulong (4 bytes) 32-bit
@@ -98,7 +98,7 @@ JAM.prototype.readFixedHeaderInfoStruct = function(callback){ // err, struct
    var _JAM = this;
 
    _JAM.readJHR(function(err){
-      if (err) callback(err);
+      if (err) return callback(err);
 
       var offsetJHR = 0;
       var FixedHeaderInfoStruct = {};
@@ -134,13 +134,13 @@ JAM.prototype.readFixedHeaderInfoStruct = function(callback){ // err, struct
 JAM.prototype.readAllHeaders = function(callback){ // err, struct
    var _JAM = this;
    _JAM.readJDX(function(err){
-      if (err) callback(err);
+      if (err) return callback(err);
 
       _JAM.readJHR(function(err){
-         if (err) callback(err);
+         if (err) return callback(err);
 
          _JAM.readFixedHeaderInfoStruct(function(err, FixedHeaderInfoStruct){
-            if (err) callback(err);
+            if (err) return callback(err);
 
             var offsetJHR = 0;
             var structure = {
