@@ -27,7 +27,7 @@ The constructed object has the following methods:
 
 ### readJHR(callback)
 
-Asynchronously reads the `.jhr` file (JAM headers) into memory, populating the object's `.JHR` property with a raw buffer. Then calls `callback(error)`.
+Asynchronously reads the `.jhr` file (JAM headers) into memory, populating the object's `.JHR` property with a raw Buffer. Then calls `callback(error)`.
 
 The data is cached. Subsequent calls to `.readJHR` won't repeat the reading operation unless the object's `.JHR` property is `null`.
 
