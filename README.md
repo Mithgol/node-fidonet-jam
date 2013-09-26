@@ -93,7 +93,7 @@ That's because Fidonet software uses different locking methods. For example, Go
 
 [![(build testing status)](https://travis-ci.org/Mithgol/node-fidonet-jam.png?branch=master)](https://travis-ci.org/Mithgol/node-fidonet-jam)
 
-The tests currently contain ≈2 megabytes of input data and thus are not included in the npm package of the module. Use the version from GitHub.
+The tests currently contain ≈14 megabytes of input data and thus are not included in the npm package of the module. Use the version from GitHub.
 
 It is necessary to install [Mocha](http://visionmedia.github.io/mocha/) and [JSHint](http://jshint.com/) for testing.
 
