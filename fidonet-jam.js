@@ -221,6 +221,35 @@ JAM.prototype.readHeader = function(number, callback){ // err, struct
    });
 };
 
+JAM.prototype.encodingFromHeader = function(header){
+   var fields = header.Subfields;
+   var kludges = [];
+   var i;
+   for( i = 0; i < fields.length; i++ ){
+      if( fields[i].LoID === 2000 ){ // FTSKLUDGE
+         kludges.push( fields[i].Buffer.toString('ascii').toLowerCase() );
+      }
+   }
+   for( i = 0; i < kludges.length; i++ ){
+      var parts = /^(chrs|charset):\s*(\S+)(\s.*)?$/.exec(kludges[i]);
+      if( parts !== null ){
+         var chrs = parts[2];
+         if( chrs === 'ibmpc' ){
+            for( var j = 0; j < kludges.length; j++ ){
+               parts = /^codepage:\s*(\S+)(\s.*)?$/.exec(kludges[i]);
+               if( parts !== null ){
+                  chrs = parts[1];
+                  if( chrs === '+7_fido' ) return 'cp866';
+                  return chrs;
+               }
+            }
+         } else if( chrs === '+7_fido' ) return 'cp866';
+         return chrs;
+      }
+   }
+   return null;
+};
+
 JAM.prototype.readAllHeaders = function(callback){ // err, struct
    var _JAM = this;
    _JAM.readJDX(function(err){

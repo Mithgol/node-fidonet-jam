@@ -152,7 +152,21 @@ Asynchronously reads all JAM headers from the base (calling `.readJDX` and `
 
 **Note 1: ** as in any other JavaScript array, the indexes of `MessageHeaders` are 0-based, while the `number` parameter of the `.readHeader` method and the `.MessageNumber` property of the header are 1-based.
 
-**Note 2: ** scanning of the whole base takes some time. As tests show, almost a second (or several seconds on an older computer or older Node.js engine) is necessary to scan even a single echo base containing 8222 messages.
+**Note 2: ** scanning of the whole base takes some time. As tests show, almost a second (or several seconds on an older computer or older Node.js engine) is necessary to scan even a single echo base containing 9151 messages. To avoid freezing of the Node.js event loop, each `.readHeader` call is postponed with `setImmediate()` (or with `process.nextTick()` in older versions of Node.js that lack `setImmediate()`).
+
+### encodingFromHeader(header)
+
+Searches the `Subfields` array of the given `header` for its `FTSKLUDGE`-type subfields (i.e. for FTS control lines aka kludges) and returns the lowercase encoding of the corresponding message (such as `'cp866'` for example) according to the [FTS-5003.001](http://ftsc.org/docs/fts-5003.001) standard:
+
+* For the first `CHRS: <identifier> <level>` or `CHARSET: <identifier> <level>` kludge found, its `identifier` value is lowercased and returned.
+
+* If the identifier has the `'ibmpc'` value, a search for a `CODEPAGE: <identifier> <level>` kludge is performed. If found, the `identifier` value of the first such kludge is lowercased and returned instead of `'ibmpc'`.
+
+* If the identifier has the `'+7_fido'` value, the `'cp866'` value is returned instead of `'+7_fido'`.
+
+* The ` <level>` part is ignored even if present.
+
+* If neither `CHRS: <identifier> <level>` nor `CHARSET: <identifier> <level>` kludge is found, `null` is returned.
 
 ## Locking files
 

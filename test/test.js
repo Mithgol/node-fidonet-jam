@@ -4,6 +4,7 @@ var assert = require('assert');
 var path = require('path');
 var util = require('util');
 var headCount = 9151;
+var headSample = 8222;
 
 describe('Fidonet JAM', function(){
    var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
@@ -31,17 +32,18 @@ describe('Fidonet JAM', function(){
          done();
       });
    });
-   it('reads the 8222nd header from the message base', function(done){
-      blog.readHeader(8222, function(err,header){
+   it('reads the '+headSample+'nd header, finds its encoding', function(done){
+      blog.readHeader(headSample, function(err,header){
          if (err) throw err;
 
-         console.log('The 8222th header:');
+         console.log('The '+headSample+'nd header:');
          console.log( util.inspect(header, false, Infinity, true) );
 
          assert.deepEqual(
             header.Subfields[4].Buffer,
             new Buffer('323a353036332f3838203530346233666235', 'hex')
          );
+         assert.equal( blog.encodingFromHeader(header), 'cp866' );
          done();
       });
    });
