@@ -267,7 +267,13 @@ JAM.prototype.readAllHeaders = function(callback){ // err, struct
             };
             var nextHeaderNumber = 0;
             var baseSize = _JAM.size();
-            var nextStep = setImmediate || process.nextTick;
+
+            var nextStep;
+            if( typeof setImmediate !== 'undefined' ){
+               nextStep = setImmediate;
+            } else {
+               nextStep = process.nextTick;
+            }
 
             var nextHeaderProcessor = function(){
                if( nextHeaderNumber >= baseSize ){
