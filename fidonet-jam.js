@@ -240,10 +240,15 @@ JAM.prototype.encodingFromHeader = function(header){
                if( parts !== null ){
                   chrs = parts[1];
                   if( chrs === '+7_fido' ) return 'cp866';
+                  if( chrs === 'utf-8' ) return 'utf8';
                   return chrs;
                }
             }
-         } else if( chrs === '+7_fido' ) return 'cp866';
+         } else if( chrs === '+7_fido' ){
+            return 'cp866';
+         } else if( chrs === 'utf-8' ){
+            return 'utf8';
+         }
          return chrs;
       }
    }

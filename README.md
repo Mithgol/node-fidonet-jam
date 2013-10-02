@@ -168,6 +168,8 @@ Searches the `Subfields` array of the given `header` for its `FTSKLUDGE`-type s
 
 * If neither `CHRS: <identifier> <level>` nor `CHARSET: <identifier> <level>` kludge is found, `null` is returned.
 
+Additionally, `'utf-8'` returned value is replaced with `'utf8'`. (This has nothing to do with FTS, but makes the returned value more compatible with the corresponding Node.js Buffer's encoding.)
+
 ## Locking files
 
 The module does not lock any files and does not create any “lock files” (flag files, semaphore files). The module's caller should control the access to the message base.
