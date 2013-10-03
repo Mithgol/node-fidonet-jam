@@ -162,13 +162,19 @@ Searches the `Subfields` array of the given `header` for its `FTSKLUDGE`-type s
 
 * If the identifier has the `'ibmpc'` value, a search for a `CODEPAGE: <identifier> <level>` kludge is performed. If found, the `identifier` value of the first such kludge is lowercased and returned instead of `'ibmpc'`.
 
-* If the identifier has the `'+7_fido'` value, the `'cp866'` value is returned instead of `'+7_fido'`.
-
 * The ` <level>` part is ignored even if present.
 
 * If neither `CHRS: <identifier> <level>` nor `CHARSET: <identifier> <level>` kludge is found, `null` is returned.
 
-Additionally, `'utf-8'` returned value is replaced with `'utf8'`. (This has nothing to do with FTS, but makes the returned value more compatible with the corresponding Node.js Buffer's encoding.)
+Before the value is returned, the following replacements are made:
+
+* `'+7_fido'` → `'cp866'` (according to FTS-5003.001 section 4)
+
+* `'+7'` → `'cp866'` (to mitigate a relatively common mistake of declaring `'+7 FIDO'` instead of `'+7_FIDO'`)
+
+* `'iso-8859-1'` → `'latin-1'` (that's a synonym)
+
+* `'utf-8'` → `'utf8'` (making it more compatible with the corresponding Node.js Buffer's encoding)
 
 ## Locking files
 

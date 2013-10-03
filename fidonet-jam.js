@@ -221,6 +221,16 @@ JAM.prototype.readHeader = function(number, callback){ // err, struct
    });
 };
 
+var normalizedEncoding = function(encoding){
+   switch(encoding){
+   case '+7_fido':    return 'cp866';   //break
+   case '+7':         return 'cp866';   //break
+   case 'iso-8859-1': return 'latin-1'; //break
+   case 'utf-8':      return 'utf8';    //break
+   default:           return encoding;  //break
+   }
+};
+
 JAM.prototype.encodingFromHeader = function(header){
    var fields = header.Subfields;
    var kludges = [];
@@ -239,17 +249,11 @@ JAM.prototype.encodingFromHeader = function(header){
                parts = /^codepage:\s*(\S+)(\s.*)?$/.exec(kludges[i]);
                if( parts !== null ){
                   chrs = parts[1];
-                  if( chrs === '+7_fido' ) return 'cp866';
-                  if( chrs === 'utf-8' ) return 'utf8';
-                  return chrs;
+                  return normalizedEncoding(chrs);
                }
             }
-         } else if( chrs === '+7_fido' ){
-            return 'cp866';
-         } else if( chrs === 'utf-8' ){
-            return 'utf8';
          }
-         return chrs;
+         return normalizedEncoding(chrs);
       }
    }
    return null;
