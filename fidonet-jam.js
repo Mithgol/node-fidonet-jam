@@ -222,12 +222,13 @@ JAM.prototype.readHeader = function(number, callback){ // err, struct
 };
 
 var normalizedEncoding = function(encoding){
+   /* jshint indent: false */
    switch(encoding){
-   case '+7_fido':    return 'cp866';   //break
-   case '+7':         return 'cp866';   //break
-   case 'iso-8859-1': return 'latin-1'; //break
-   case 'utf-8':      return 'utf8';    //break
-   default:           return encoding;  //break
+      case '+7_fido':    return 'cp866';   //break
+      case '+7':         return 'cp866';   //break
+      case 'iso-8859-1': return 'latin-1'; //break
+      case 'utf-8':      return 'utf8';    //break
+      default:           return encoding;  //break
    }
 };
 
