@@ -1,4 +1,6 @@
 var fs = require('fs');
+var extend = require('util-extend');
+var sb = require('singlebyte');
 
 function getSubfieldTypeFromLoID(LoID){
    /* jshint indent: false */
@@ -260,6 +262,24 @@ JAM.prototype.encodingFromHeader = function(header){
    return null;
 };
 
+var decodeDefaults = {
+   defaultEncoding: 'cp866',
+   useDefaultIfUnknown: true
+};
+
+JAM.prototype.decodeHeader = function(header, decodeOptions){
+   var options = extend(decodeDefaults, decodeOptions);
+
+   var encoding = this.encodingFromHeader(header);
+   if( encoding === null ) encoding = options.defaultEncoding;
+   if( !sb.isEncoding(encoding) && options.useDefaultIfUnknown ){
+      encoding = options.defaultEncoding;
+   }
+   if( !sb.isEncoding(encoding) ){
+      throw new Error(this.errors.UNKNOWN_ENCODING);
+   }
+};
+
 JAM.prototype.readAllHeaders = function(callback){ // err, struct
    var _JAM = this;
    _JAM.readJDX(function(err){
@@ -308,7 +328,8 @@ JAM.prototype.readAllHeaders = function(callback){ // err, struct
 
 JAM.prototype.errors = {
    NOT_A_POSITIVE: "The message's number must be positive!",
-   TOO_BIG: "The message's number exceed the message base's size!"
+   TOO_BIG: "The message's number exceed the message base's size!",
+   UNKNOWN_ENCODING: "Unknown encoding!"
 };
 
 module.exports = JAM;
