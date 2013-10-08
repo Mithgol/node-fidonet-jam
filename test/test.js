@@ -39,6 +39,11 @@ describe('Fidonet JAM', function(){
          console.log('The '+headSample+'nd header:');
          console.log( util.inspect(header, false, Infinity, true) );
 
+         console.log('The '+headSample+'nd header (decoded):');
+         console.log(util.inspect(
+            blog.decodeHeader(header), false, Infinity, true
+         ));
+
          assert.deepEqual(
             header.Subfields[4].Buffer,
             new Buffer('323a353036332f3838203530346233666235', 'hex')

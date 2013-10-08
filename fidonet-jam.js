@@ -1,5 +1,7 @@
 var fs = require('fs');
+
 var extend = require('util-extend');
+var moment = require('moment');
 var sb = require('singlebyte');
 
 function getSubfieldTypeFromLoID(LoID){
@@ -268,6 +270,7 @@ var decodeDefaults = {
 };
 
 JAM.prototype.decodeHeader = function(header, decodeOptions){
+   /* jshint indent: false */
    var options = extend(decodeDefaults, decodeOptions);
 
    var encoding = this.encodingFromHeader(header);
@@ -278,6 +281,91 @@ JAM.prototype.decodeHeader = function(header, decodeOptions){
    if( !sb.isEncoding(encoding) ){
       throw new Error(this.errors.UNKNOWN_ENCODING);
    }
+
+   var decoded = {};
+   decoded.origTime = moment.utc(''+header.DateWritten,   'X').toArray();
+   decoded.origTime[1]++;
+   decoded.procTime = moment.utc(''+header.DateProcessed, 'X').toArray();
+   decoded.procTime[1]++;
+   decoded.kludges = [];
+
+   for( var i = 0; i < header.Subfields.length; i++ ){
+      switch( header.Subfields[i].LoID ){
+         case 0: // OADDRESS
+            decoded.origAddr = sb.bufToStr(
+               header.Subfields[i].Buffer, encoding
+            );
+         break;
+         case 1: // DADDRESS
+            decoded.toAddr = sb.bufToStr(
+               header.Subfields[i].Buffer, encoding
+            );
+         break;
+         case 2: // SENDERNAME
+            decoded.from = sb.bufToStr(
+               header.Subfields[i].Buffer, encoding
+            );
+         break;
+         case 3: // RECEIVERNAME
+            decoded.to = sb.bufToStr(
+               header.Subfields[i].Buffer, encoding
+            );
+         break;
+         case 4: // MSGID
+            decoded.msgid = sb.bufToStr(
+               header.Subfields[i].Buffer, encoding
+            );
+         break;
+         case 5: // REPLYID
+            decoded.replyid = sb.bufToStr(
+               header.Subfields[i].Buffer, encoding
+            );
+         break;
+         case 6: // SUBJECT
+            decoded.subj = sb.bufToStr(
+               header.Subfields[i].Buffer, encoding
+            );
+         break;
+         case 7: // PID
+            decoded.pid = sb.bufToStr(
+               header.Subfields[i].Buffer, encoding
+            );
+         break;
+         /*
+         case 8: return 'TRACE'; //break;
+         case 9: return 'ENCLOSEDFILE'; //break;
+         case 10: return 'ENCLOSEDFILEWALIAS'; //break;
+         case 11: return 'ENCLOSEDFREQ'; //break;
+         case 12: return 'ENCLOSEDFILEWCARD'; //break;
+         case 13: return 'ENCLOSEDINDIRECTFILE'; //break;
+         case 1000: return 'EMBINDAT'; //break;
+         */
+         case 2000: // FTSKLUDGE
+            decoded.kludges.push(sb.bufToStr(
+               header.Subfields[i].Buffer, encoding
+            ));
+         break;
+         case 2001: // SEENBY2D
+            decoded.seenby = sb.bufToStr(
+               header.Subfields[i].Buffer, encoding
+            );
+         break;
+         case 2002: // PATH2D
+            decoded.path = sb.bufToStr(
+               header.Subfields[i].Buffer, encoding
+            );
+         break;
+         /*
+         case 2003: return 'FLAGS'; //break;
+         */
+         case 2004: // TZUTCINFO
+            decoded.timezone = sb.bufToStr(
+               header.Subfields[i].Buffer, encoding
+            );
+         break;
+      }
+   }
+   return decoded;
 };
 
 JAM.prototype.readAllHeaders = function(callback){ // err, struct

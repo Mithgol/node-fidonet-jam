@@ -176,6 +176,53 @@ Before the value is returned, the following replacements are made:
 
 * `'utf-8'` → `'utf8'` (making it more compatible with the corresponding Node.js Buffer's encoding)
 
+### decodeHeader(header, options)
+
+Uses the encoding (determined by `.encodingFromHeader(header)`) to decode strings from the Buffer properties of the header.
+
+* If `.encodingFromHeader` returns `null`, `options.defaultEncoding` is used.
+
+* If `.encodingFromHeader` returns an unknown encoding ([`require('singlebyte').isEncoding`](https://github.com/Mithgol/node-singlebyte#isencodingencodingname) returns `false`), `options.defaultEncoding` is used if `options.useDefaultIfUnknown` is true. And if `options.defaultEncoding` is also an unknown encoding, an error is thrown.
+
+The default values of `options`:
+
+```js
+{
+defaultEncoding: 'cp866',
+useDefaultIfUnknown: true
+}
+```
+
+Returns the decoded header, which is an object with the following properties:
+
+* `origTime` — an array (`[year, month, day, hour, minute, second, 0]`) converted from the header's `DateWritten` property. (Month numbers are `1…12` unlike JS `Date`.)
+
+* `procTime` — an array (`[year, month, day, hour, minute, second, 0]`) converted from the header's `DateProcessed` property. (Month numbers are `1…12` unlike JS `Date`.)
+
+* `kludges` — an array of kludge strings without the preceding SOH (`Ctrl+A`, `0x01`) code. Collected from the header's `Subfields` of `FTSKLUDGE` type. Kludges of some special types (`MSGID`, `REPLY`, `PID`, `PATH`, `SEEN-BY`) are converted to their own properties (see below).
+
+The same returned object may also have one or more of the following properties:
+
+* `origAddr` — sender's address.
+
+* `toAddr` — destination's address. (Optional in echomail.)
+
+* `from` — sender's name.
+
+* `to` — receiver's name.
+
+* `subj` — the message's subject.
+
+* `msgid` and `replyid` — the `MSGID` of the message and the source it replies to.
+
+* `pid` — the program that generated the message.
+
+* `path` — space-separated list of the nodes the message travelled through. (The 2D addresses of that nodes are given.)
+
+* `seenby` — space-separated incomplete list of the nodes that seen the message. (The 2D addresses of that nodes are given.)
+
+* `timezone` — sender's time zone in `+HHmm` or `-HHmm` form (for example, `-0400`) where `+` may be omitted.
+
 ## Locking files
 
 The module does not lock any files and does not create any “lock files” (flag files, semaphore files). The module's caller should control the access to the message base.
