@@ -9,18 +9,20 @@ var headSample = 8222;
 describe('Fidonet JAM', function(){
    var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
 
-   it('reads index and can destroy it', function(done){
+   it('reads index and can clear the cache aftwerwards', function(done){
       blog.readJDX(function(err){
          if (err) throw err;
 
          assert.equal(blog.size(), headCount);
-         blog.clearCache();
+         blog.clearCache('headers');
+         assert.equal(blog.size(), headCount);
+         blog.clearCache('index');
          assert.equal(blog.indexStructure, null);
 
          done();
       });
    });
-   it('reads the fixed header', function(done){
+   it('reads the fixed header and also can clear the cache', function(done){
       blog.readFixedHeaderInfoStruct(function(err, FixedHeaderInfoStruct){
          if (err) throw err;
 
@@ -29,6 +31,10 @@ describe('Fidonet JAM', function(){
          console.log(util.inspect(FixedHeaderInfoStruct,
             false, Infinity, true
          ));
+
+         blog.clearCache('headers');
+         assert.equal(blog.JHR, null);
+
          done();
       });
    });

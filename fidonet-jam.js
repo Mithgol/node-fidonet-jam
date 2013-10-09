@@ -93,9 +93,20 @@ JAM.prototype.size = function(){
    }
 };
 
-JAM.prototype.clearCache = function(){
-   this.JHR = null;
-   this.indexStructure = null;
+JAM.prototype.clearCache = function(cache){
+   /* jshint indent: false */
+   switch(cache){
+      case 'headers':
+         this.JHR = null;
+      break;
+      case 'index':
+         this.indexStructure = null;
+      break;
+      default:
+         this.JHR = null;
+         this.indexStructure = null;
+      break;
+   }
 };
 
 JAM.prototype.readFixedHeaderInfoStruct = function(callback){ // err, struct

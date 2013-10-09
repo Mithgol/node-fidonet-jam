@@ -41,11 +41,19 @@ The data is cached. Subsequent calls to `.readJDX` won't repeat the reading op
 
 Returns `.indexStructure.length` property (or `undefined` when `.indexStructure` is `null`).
 
-### clearCache()
+### clearCache(cache)
 
 Writes `null` to the `JHR` and `indexStructure` properties of the object.
 
 The memory cache becomes empty and thus the next `readJHR` or `readJDX` will read the data from the disk again.
+
+The behaviour can be altered by passing a string `cache` parameter:
+
+* `cache === 'headers'` — only `JHR` becomes `null`;
+
+* `cache === 'index'` — only `indexStructure` becomes `null`;
+
+* any other value (or just `.clearCache()` without parameters) — both properties become `null`.
 
 ### readFixedHeaderInfoStruct(callback)
 
