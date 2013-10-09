@@ -32,6 +32,7 @@ describe('Fidonet JAM', function(){
             false, Infinity, true
          ));
 
+         assert.notEqual(blog.JHR, null);
          blog.clearCache('headers');
          assert.equal(blog.JHR, null);
 
