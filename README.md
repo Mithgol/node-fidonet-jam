@@ -31,6 +31,12 @@ Asynchronously reads the `.jhr` file (JAM headers) into memory, populating the
 
 The data is cached. Subsequent calls to `.readJHR` won't repeat the reading operation unless the object's `.JHR` property is `null`.
 
+### readJDT(callback)
+
+Asynchronously reads the `.jdt` file (JAM message texts) into memory, populating the object's `.JDT` property with a raw Buffer. Then calls `callback(error)`.
+
+The data is cached. Subsequent calls to `.readJDT` won't repeat the reading operation unless the object's `.JDT` property is `null`.
+
 ### readJDX(callback)
 
 Asynchronously reads the `.jdx` file (JAM index) into memory and parses that index, populating the object's `.indexStructure` property with an array of `{'ToCRC': ..., 'offset': ...}` objects. Then calls `callback(error)`.
@@ -49,11 +55,13 @@ The memory cache becomes empty and thus the next `readJHR` or `readJDX` will r
 
 The behaviour can be altered by passing a string `cache` parameter:
 
-* `cache === 'headers'` — only `JHR` becomes `null`;
+* `cache === 'header'` (or `'headers'`) — only `JHR` becomes `null`;
+
+* `cache === 'text'` (or `'texts'`) — only `JDT` becomes `null`;
 
 * `cache === 'index'` — only `indexStructure` becomes `null`;
 
-* any other value (or just `.clearCache()` without parameters) — both properties become `null`.
+* any other value (or just `.clearCache()` without parameters) — all of the above properties become `null`.
 
 ### readFixedHeaderInfoStruct(callback)
 
@@ -230,6 +238,25 @@ The same returned object may also have one or more of the following properti
 * `seenby` — space-separated incomplete list of the nodes that seen the message. (The 2D addresses of that nodes are given.)
 
 * `timezone` — sender's time zone in `+HHmm` or `-HHmm` form (for example, `-0400`) where `+` may be omitted.
+
+### decodeMessage(header, options, callback)
+
+Using the given header, reads the text of the corresponding message (calling `.readJDT` in the process). Then uses the encoding (determined by `.encodingFromHeader(header)`) to decode the text of the message. Calls `callback(error, messageText)` when the decoding is finished.
+
+* If `.encodingFromHeader` returns `null`, `options.defaultEncoding` is used.
+
+* If `.encodingFromHeader` returns an unknown encoding ([`require('singlebyte').isEncoding`](https://github.com/Mithgol/node-singlebyte#isencodingencodingname) returns `false`), `options.defaultEncoding` is used if `options.useDefaultIfUnknown` is true. And if `options.defaultEncoding` is also an unknown encoding, an error is thrown.
+
+The default values of `options`:
+
+```js
+{
+defaultEncoding: 'cp866',
+useDefaultIfUnknown: true
+}
+```
+
+Before `messageText` is given to the callback, all occurences of the Fidonet line ending (`CR`, `'\r'`) are replaced by the Unix line ending (`LF`, `'\n'`).
 
 ## Locking files
 

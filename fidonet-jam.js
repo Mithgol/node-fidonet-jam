@@ -39,8 +39,8 @@ var JAM = function(echoPath){
    // Buffers:
    this.JHR = null;
    this.indexStructure = null;
-   /*
    this.JDT = null;
+   /*
    this.JLR = null;
    */
 };
@@ -53,6 +53,18 @@ JAM.prototype.readJHR = function(callback){ // (err)
       if (err) return callback(err);
 
       _JAM.JHR = data;
+      callback(null);
+   });
+};
+
+JAM.prototype.readJDT = function(callback){ // (err)
+   var _JAM = this;
+   if (_JAM.JDT !== null) return callback(null);
+
+   fs.readFile(_JAM.echoPath+'.jdt', function (err, data) {
+      if (err) return callback(err);
+
+      _JAM.JDT = data;
       callback(null);
    });
 };
@@ -96,14 +108,20 @@ JAM.prototype.size = function(){
 JAM.prototype.clearCache = function(cache){
    /* jshint indent: false */
    switch(cache){
+      case 'header':
       case 'headers':
          this.JHR = null;
+      break;
+      case 'text':
+      case 'texts':
+         this.JDT = null;
       break;
       case 'index':
          this.indexStructure = null;
       break;
       default:
          this.JHR = null;
+         this.JDT = null;
          this.indexStructure = null;
       break;
    }
@@ -377,6 +395,33 @@ JAM.prototype.decodeHeader = function(header, decodeOptions){
       }
    }
    return decoded;
+};
+
+JAM.prototype.decodeMessage = function(header, decodeOptions, callback){
+   if(typeof callback === 'undefined' && typeof decodeOptions === 'function'){
+      callback = decodeOptions;
+      decodeOptions = void 0;
+   }
+   var _JAM = this;
+
+   var options = extend(decodeDefaults, decodeOptions);
+
+   var encoding = _JAM.encodingFromHeader(header);
+   if( encoding === null ) encoding = options.defaultEncoding;
+   if( !sb.isEncoding(encoding) && options.useDefaultIfUnknown ){
+      encoding = options.defaultEncoding;
+   }
+   if( !sb.isEncoding(encoding) ){
+      return callback(new Error(this.errors.UNKNOWN_ENCODING));
+   }
+
+   _JAM.readJDT(function(err){
+      if (err) return callback(err);
+
+      callback(null, sb.bufToStr(
+         _JAM.JDT, encoding, header.Offset, header.Offset + header.TxtLen
+      ).replace(/\r/g, '\n'));
+   });
 };
 
 JAM.prototype.readAllHeaders = function(callback){ // err, struct
