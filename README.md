@@ -1,4 +1,4 @@
-The **Fidonet JAM** module reads headers of Fidonet echomail messages from JAM message bases according to JAM (The Joaquim-Andrew-Mats Message Base Proposal) [quoted in Ru.FTN.Develop.](http://groups.google.com/group/fido7.ru.ftn.develop/msg/e2f5486f80394418)
+The **Fidonet JAM** module is able to read headers and texts of Fidonet echomail messages from JAM message bases according to JAM (The Joaquim-Andrew-Mats Message Base Proposal) [quoted in Ru.FTN.Develop.](http://groups.google.com/group/fido7.ru.ftn.develop/msg/e2f5486f80394418)
 
 The module is written in JavaScript and requires [Node.js](http://nodejs.org/) (version 0.10 or newer) to run.
 
@@ -280,12 +280,8 @@ After that you may run `npm test` (in the directory of the Fidonet JAM modul
 
 ## TODO
 
-The package's development is still in progress and leaves a lot to be desired:
+A couple of possible improvements:
 
-* Better API (and documented in README).
-
-* Reading messages (not only headers).
-
-* Trees of replies.
+* Building trees of replies, using `ReplyTo`, `Reply1st` and `Replynext` properties of the headers.
 
 * [FGHI](https://github.com/Mithgol/FGHI-URL) support.
