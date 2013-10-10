@@ -49,9 +49,9 @@ Returns `.indexStructure.length` property (or `undefined` when `.indexStructure`
 
 ### clearCache(cache)
 
-Writes `null` to the `JHR` and `indexStructure` properties of the object.
+Writes `null` to the `JHR`, `JDT` and `indexStructure` properties of the object.
 
-The memory cache becomes empty and thus the next `readJHR` or `readJDX` will read the data from the disk again.
+The memory cache becomes empty and thus the next `readJHR`, `readJDT` or `readJDX` will read the data from the disk again.
 
 The behaviour can be altered by passing a string `cache` parameter:
 
