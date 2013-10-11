@@ -285,3 +285,7 @@ A couple of possible improvements:
 * Building trees of replies, using `ReplyTo`, `Reply1st` and `Replynext` properties of the headers.
 
 * [FGHI](https://github.com/Mithgol/FGHI-URL) support.
+
+## License
+
+MIT License, see the `LICENSE` file.
