@@ -1,6 +1,5 @@
 var fs = require('fs');
-
-var extend = require('util-extend');
+var extend = require('util')._extend;
 var moment = require('moment');
 var sb = require('singlebyte');
 
