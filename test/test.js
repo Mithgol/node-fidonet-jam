@@ -3,43 +3,9 @@ var JAM = require('../');
 var assert = require('assert');
 var path = require('path');
 var util = require('util');
-var extend = util._extend;
 var headCount = 9151;
 var headSample = 8222;
 var headSampleth = '8222nd';
-
-describe('hidden util._extend(defaults, options) method', function(){
-   it('returns defaults if options are missing', function(){
-      assert.deepEqual(
-         extend({foo: 'bar', baz: ['qux', 'quux']}),
-         {foo: 'bar', baz: ['qux', 'quux']}
-      );
-   });
-   it('adds elements of options to defaults', function(){
-      assert.deepEqual(
-         extend({foo: 'bar', baz: ['qux', 'quux']}, {jinx: 'added'}),
-         {foo: 'bar', baz: ['qux', 'quux'], jinx: 'added'}
-      );
-   });
-   it('replaces defaults with options (one level deep)', function(){
-      assert.deepEqual(
-         extend({foo: 'bar', baz: ['qux', 'quux']}, {foo: 'replaced'}),
-         {foo: 'replaced', baz: ['qux', 'quux']}
-      );
-   });
-   it('replaces entire array elements (does not extend them)', function(){
-      assert.deepEqual(
-         extend({foo: 'bar', baz: ['qux', 'quux']}, {baz: ['replaced']}),
-         {foo: 'bar', baz: ['replaced']}
-      );
-   });
-   it('does not extend nested objects (replaces them instead)', function(){
-      assert.deepEqual(
-         extend({foo: 'bar', baz: {qux: 'quux'}}, {baz: {jinx: 'replaced'}}),
-         {foo: 'bar', baz: {jinx: 'replaced'}}
-      );
-   });
-});
 
 describe('Fidonet JAM', function(){
    var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
