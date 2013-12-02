@@ -10,6 +10,21 @@ var headSampleth = '8222nd';
 describe('Fidonet JAM', function(){
    var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
 
+   it('reads lastreads, can clear the cache aftwerwards', function(done){
+      blog.readJLR(function(err){
+         if (err) throw err;
+
+         assert.equal(blog.lastreads.length, 1);
+         assert.equal(blog.lastreads[0].UserID, 0x5b12347c);
+         blog.clearCache('headers');
+         assert.equal(blog.lastreads.length, 1);
+         assert.equal(blog.lastreads[0].UserID, 0x5b12347c);
+         blog.clearCache('lastreads');
+         assert.equal(blog.lastreads, null);
+
+         done();
+      });
+   });
    it('reads index, can clear the cache aftwerwards', function(done){
       blog.readJDX(function(err){
          if (err) throw err;

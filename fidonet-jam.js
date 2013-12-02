@@ -35,20 +35,17 @@ var JAM = function(echoPath){
 
    this.echoPath = echoPath;
 
-   // Buffers:
    this.JHR = null;
    this.indexStructure = null;
    this.JDT = null;
-   /*
-   this.JLR = null;
-   */
+   this.lastreads = null;
 };
 
 JAM.prototype.readJHR = function(callback){ // (err)
    var _JAM = this;
    if (_JAM.JHR !== null) return callback(null);
 
-   fs.readFile(_JAM.echoPath+'.jhr', function (err, data) {
+   fs.readFile(_JAM.echoPath+'.jhr', function(err, data){
       if (err) return callback(err);
 
       _JAM.JHR = data;
@@ -60,7 +57,7 @@ JAM.prototype.readJDT = function(callback){ // (err)
    var _JAM = this;
    if (_JAM.JDT !== null) return callback(null);
 
-   fs.readFile(_JAM.echoPath+'.jdt', function (err, data) {
+   fs.readFile(_JAM.echoPath+'.jdt', function(err, data){
       if (err) return callback(err);
 
       _JAM.JDT = data;
@@ -72,7 +69,7 @@ JAM.prototype.readJDX = function(callback){ // (err)
    var _JAM = this;
    if (_JAM.indexStructure !== null) return callback(null);
 
-   fs.readFile(_JAM.echoPath+'.jdx', function (err, data) {
+   fs.readFile(_JAM.echoPath+'.jdx', function(err, data){
       if (err) return callback(err);
 
       var indexOffset = 0;
@@ -88,6 +85,42 @@ JAM.prototype.readJDX = function(callback){ // (err)
             _JAM.indexStructure.push({
                'ToCRC':  nextToCRC,
                'offset': nextOffset
+            });
+         }
+      }
+
+      callback(null);
+   });
+};
+
+JAM.prototype.readJLR = function(callback){ // (err)
+   var _JAM = this;
+   if (_JAM.lastreads !== null) return callback(null);
+
+   fs.readFile(_JAM.echoPath+'.jlr', function(err, data){
+      if (err) return callback(err);
+
+      var jlrOffset = 0;
+      var nextUserCRC;  // ulong (4 bytes) 32-bit
+      var nextUserID;   // ulong (4 bytes) 32-bit
+      var nextLastRead; // ulong (4 bytes) 32-bit
+      var nextHighRead; // ulong (4 bytes) 32-bit
+      _JAM.lastreads = [];
+      while( jlrOffset + 16 <= data.length ){
+         nextUserCRC = data.readUInt32LE(jlrOffset);
+         jlrOffset += 4;
+         nextUserID = data.readUInt32LE(jlrOffset);
+         jlrOffset += 4;
+         nextLastRead = data.readUInt32LE(jlrOffset);
+         jlrOffset += 4;
+         nextHighRead = data.readUInt32LE(jlrOffset);
+         jlrOffset += 4;
+         if( nextUserCRC !== 0xffffffff || nextUserID !== 0xffffffff ){
+            _JAM.lastreads.push({
+               'UserCRC':  nextUserCRC,
+               'UserID':   nextUserID,
+               'LastRead': nextLastRead,
+               'HighRead': nextHighRead
             });
          }
       }
@@ -118,10 +151,15 @@ JAM.prototype.clearCache = function(cache){
       case 'index':
          this.indexStructure = null;
       break;
+      case 'lastread':
+      case 'lastreads':
+         this.lastreads = null;
+      break;
       default:
          this.JHR = null;
          this.JDT = null;
          this.indexStructure = null;
+         this.lastreads = null;
       break;
    }
 };

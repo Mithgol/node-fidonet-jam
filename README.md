@@ -37,6 +37,22 @@ Asynchronously reads the `.jdt` file (JAM message texts) into memory, populatin
 
 The data is cached. Subsequent calls to `.readJDT` won't repeat the reading operation unless the object's `.JDT` property is `null`.
 
+### readJLR(callback)
+
+Asynchronously reads the `.jlr` file (JAM lastread storage) into memory and parses it, populating the object's `.lastreads` property with an array of objects with the following properties:
+
+* `UserCRC` — CRC-32 of the lowercase user name (where the lowercasing function converts `A-Z` to `a-z` only).
+
+* `UserID` — Unique ID of that user. (Some echomail readers, such as GoldED+ and GoldED-NSF, use a duplicate of `UserCRC` as `UserID`.)
+
+* `LastRead` — Number of the message last read by that user.
+
+* `HighRead` — Highest of the numbers of the messages read by that user.
+
+Then `callback(error)` is called.
+
+The data is cached. Subsequent calls to `.readJLR` won't repeat the reading operation unless the object's `.lastreads` property is `null`.
+
 ### readJDX(callback)
 
 Asynchronously reads the `.jdx` file (JAM index) into memory and parses that index, populating the object's `.indexStructure` property with an array of `{'ToCRC': ..., 'offset': ...}` objects. Then calls `callback(error)`.
@@ -49,15 +65,17 @@ Returns `.indexStructure.length` property (or `undefined` when `.indexStructure`
 
 ### clearCache(cache)
 
-Writes `null` to the `JHR`, `JDT` and `indexStructure` properties of the object.
+Writes `null` to the `JHR`, `JDT`, `lastreads` and `indexStructure` properties of the object.
 
-The memory cache becomes empty and thus the next `readJHR`, `readJDT` or `readJDX` will read the data from the disk again.
+The memory cache becomes empty and thus the next `readJHR`, `readJDT`, `readJLR` or `readJDX` will read the data from the disk again.
 
 The behaviour can be altered by passing a string `cache` parameter:
 
 * `cache === 'header'` (or `'headers'`) — only `JHR` becomes `null`;
 
 * `cache === 'text'` (or `'texts'`) — only `JDT` becomes `null`;
+
+* `cache === 'lastread'` (or `'lastreads'`) — only `lastreads` becomes `null`;
 
 * `cache === 'index'` — only `indexStructure` becomes `null`;
 
