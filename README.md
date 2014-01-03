@@ -55,9 +55,19 @@ Then `callback(error)` is called.
 
 The data is cached. Subsequent calls to `.readJLR` won't repeat the reading operation unless the object's `.lastreads` property is `null`.
 
+Both `LastRead` and `HighRead` use internal numbering of the messages (e.g. equal to the `MessageNumber` property of the corresponding message's header).
+
 ### readJDX(callback)
 
-Asynchronously reads the `.jdx` file (JAM index) into memory and parses that index, populating the object's `.indexStructure` property with an array of `{'ToCRC': ..., 'offset': ...}` objects. Then calls `callback(error)`.
+Asynchronously reads the `.jdx` file (JAM index) into memory and parses that index, populating the object's `.indexStructure` property with an array of objects with the following properties:
+
+* `ToCRC` — CRC-32 of the name of the message's recipient (where the lowercasing function converts `A-Z` to `a-z` only).
+
+* `offset` — the physical offset of the message's header in the `.jhr` (header) file.
+
+* `MessageNum0` — a message's rebased (zero-based) internal number. Starts from `0` (zero), i.e. `.indexStructure[0].MessageNum0 === 0`. The `basemsgnum` value from the “JAM fixed header” (see below) should be added to generate the actual internal number of a message. Deleted messages leave gaps in that numbering (such as `.indexStructure[i].MessageNum0 > i` and `.indexStructure[i].MessageNum0 > .indexStructure[i-1].MessageNum0 + 1`) until the message base is packed by an echoprocessor.
+
+Then `callback(error)` is called.
 
 The data is cached. Subsequent calls to `.readJDX` won't repeat the reading operation unless the object's `.indexStructure` property is `null`.
 
@@ -109,7 +119,7 @@ This property has to be taken into account when an application calculates t
 
 Asynchronously reads a JAM header by its number (calling `.readJDX` and `.readJHR` methods in the process).
 
-The headers are treated as numbered from (and including) `1` to (and including) `.size()`, i.e. the `basemsgnum` (see above) is ignored. If the given number is below zero or above `.size()`, then `callback(new Error(…))` is called (see the error codes in the bottom of `fidonet-jam.js`).
+The accepted `number` values start from (and including) `1` and go to (and including) `.size()` without gaps, ignoring the internal `MessageNumber` values in the headers. If the given number is below zero or above `.size()`, then `callback(new Error(…))` is called (see the error codes in the bottom of `fidonet-jam.js`).
 
 The callback has the form `callback(error, header)`. That `header` has the following structure:
 
@@ -129,7 +139,7 @@ The callback has the form `callback(error, header)`. That `header` has the foll
 
 * `DateWritten`, `DateReceived` and `DateProcessed` are the (32 bit) timestamps of the moments when the message was written, received and processed by a tosser (or a scanner).
 
-* `MessageNumber` is the (32 bit, 1-based) number of the message. Should be equal to the `number` parameter given to the `.readHeader` method (though can be different, because `.readHeader` uses the message's position in `.indexStructure` instead of scanning the headers).
+* `MessageNumber` is the (32 bit, 1-based) internal number of the message. Can be different from the value of the `number` parameter given to the `.readHeader` method. (However, you may expect the message's internal number to be strictly equal to `.indexStructure[number-1].MessageNum0 + basemsgnum` where `.indexStructure` is populated by `.readJDX` and `basemsgnum` is a property of the “JAM fixed header”.)
 
 * `Attribute` is the (32 bit) bitfield containing the message's attributes.
 

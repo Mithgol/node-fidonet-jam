@@ -73,6 +73,7 @@ JAM.prototype.readJDX = function(callback){ // (err)
       if (err) return callback(err);
 
       var indexOffset = 0;
+      var MessageNum0 = 0;
       var nextToCRC;  // ulong (4 bytes) 32-bit
       var nextOffset; // ulong (4 bytes) 32-bit
       _JAM.indexStructure = [];
@@ -83,10 +84,12 @@ JAM.prototype.readJDX = function(callback){ // (err)
          indexOffset += 4;
          if( nextToCRC !== 0xffffffff || nextOffset !== 0xffffffff ){
             _JAM.indexStructure.push({
-               'ToCRC':  nextToCRC,
-               'offset': nextOffset
+               'ToCRC':       nextToCRC,
+               'offset':      nextOffset,
+               'MessageNum0': MessageNum0
             });
          }
+         MessageNum0++;
       }
 
       callback(null);
@@ -473,7 +476,7 @@ JAM.prototype.readAllHeaders = function(callback){ // err, struct
             if (err) return callback(err);
 
             var structure = {
-               'FixedHeaderInfoStruct': FixedHeaderInfoStruct,
+               'FixedHeader': FixedHeaderInfoStruct,
                'MessageHeaders': []
             };
             var nextHeaderNumber = 0;

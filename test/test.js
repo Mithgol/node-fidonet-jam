@@ -10,7 +10,7 @@ var headSampleth = '8222nd';
 describe('Fidonet JAM', function(){
    var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
 
-   it('reads lastreads, can clear the cache aftwerwards', function(done){
+   it('reads lastreads, can clear the cache afterwards', function(done){
       blog.readJLR(function(err){
          if (err) throw err;
 
@@ -25,7 +25,7 @@ describe('Fidonet JAM', function(){
          done();
       });
    });
-   it('reads index, can clear the cache aftwerwards', function(done){
+   it('reads index, can clear the cache afterwards', function(done){
       blog.readJDX(function(err){
          if (err) throw err;
 
@@ -43,7 +43,7 @@ describe('Fidonet JAM', function(){
          if (err) throw err;
 
          assert.equal(FixedHeaderInfoStruct.activemsgs, headCount);
-         console.log('The fixed header:');
+         console.log('\nThe fixed header:');
          console.log(util.inspect(FixedHeaderInfoStruct,
             false, Infinity, true
          ));
@@ -61,7 +61,7 @@ describe('Fidonet JAM', function(){
       blog.readHeader(headSample, function(err, header){
          if (err) throw err;
 
-         console.log('The '+headSampleth+' header:');
+         console.log('\nThe '+headSampleth+' header:');
          console.log( util.inspect(header, false, Infinity, true) );
 
          console.log('The '+headSampleth+' header (decoded):');
@@ -111,6 +111,24 @@ describe('Fidonet JAM', function(){
 
          assert.equal(data.MessageHeaders.length, headCount);
          done();
+      });
+   });
+   it('MessageNum0 + basemsgnum === MessageNumber everywhere', function(done){
+      blog.readJDX(function(err){
+         if (err) throw err;
+
+         blog.readAllHeaders(function(err, data){
+            if (err) throw err;
+
+            for(var head=0; head < data.MessageHeaders.length; head++){
+               assert.strictEqual(
+                  blog.indexStructure[head].MessageNum0 +
+                  data.FixedHeader.basemsgnum,
+                  data.MessageHeaders[head].MessageNumber
+               );
+            }
+            done();
+         });
       });
    });
 });
