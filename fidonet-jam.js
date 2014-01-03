@@ -482,13 +482,6 @@ JAM.prototype.readAllHeaders = function(callback){ // err, struct
             var nextHeaderNumber = 0;
             var baseSize = _JAM.size();
 
-            var nextStep;
-            if( typeof setImmediate !== 'undefined' ){
-               nextStep = setImmediate;
-            } else {
-               nextStep = process.nextTick;
-            }
-
             var nextHeaderProcessor = function(){
                if( nextHeaderNumber >= baseSize ){
                   // all headers are processed
@@ -500,7 +493,7 @@ JAM.prototype.readAllHeaders = function(callback){ // err, struct
                   if(err) return callback(err);
 
                   structure.MessageHeaders.push( nextHeader );
-                  nextStep(nextHeaderProcessor);
+                  setImmediate(nextHeaderProcessor);
                });
             };
 
