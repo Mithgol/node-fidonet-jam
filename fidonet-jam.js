@@ -2,6 +2,7 @@ var fs = require('fs');
 var extend = require('util')._extend;
 var moment = require('moment');
 var sb = require('singlebyte');
+var crc32 = require('buffer-crc32');
 
 function getSubfieldTypeFromLoID(LoID){
    /* jshint indent: false */
@@ -39,6 +40,16 @@ var JAM = function(echoPath){
    this.indexStructure = null;
    this.JDT = null;
    this.lastreads = null;
+};
+
+JAM.prototype.crc32 = function(inString, keepCase){
+   if( !keepCase ){
+      inString = inString.replace(/[A-Z]/g, function(upperChar){
+         return upperChar.toLowerCase();
+      });
+   }
+   // 4294967295 is the maximum 32-bit integer
+   return 4294967295 - crc32.unsigned( inString );
 };
 
 JAM.prototype.readJHR = function(callback){ // (err)

@@ -10,6 +10,15 @@ var headSampleth = '8222nd';
 describe('Fidonet JAM', function(){
    var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
 
+   it('calculates correct JAM CRC-32 of an empty string', function(){
+      assert.equal(blog.crc32(''), 4294967295);
+   });
+
+   it('calculates correct JAM CRC-32 of the string "Mithgol the Webmaster"',
+   function(){
+      assert.equal(blog.crc32('Mithgol the Webmaster'), 0x5b12347c);
+   });
+
    it('reads lastreads, can clear the cache afterwards', function(done){
       blog.readJLR(function(err){
          if (err) throw err;
@@ -68,6 +77,15 @@ describe('Fidonet JAM', function(){
          console.log(util.inspect(
             blog.decodeHeader(header), false, Infinity, true
          ));
+
+         header.Subfields.forEach(function(subfield){
+            if( subfield.type === 'MSGID' ){
+               assert.equal(
+                  blog.crc32( subfield.Buffer.toString('binary'), true ),
+                  header.MSGIDcrc
+               );
+            }
+         });
 
          assert.deepEqual(
             header.Subfields[4].Buffer,
