@@ -127,6 +127,18 @@ According to the JAM specifications, the `basemsgnum` property determines the�
 
 This property has to be taken into account when an application calculates the next available message number (for creating new messages) as well as the highest and lowest message number in a message area.
 
+### indexLastRead(username, callback)
+
+Finds out which message was last read by the given user, calling `.readJLR` and (probably) `.readFixedHeaderInfoStruct` and `.readJDX` in the process.
+
+Afterwards calls `callback(error, index)` where `index` is the (zero-based) position of that last read message in the object's `.indexStructure` array. (However, `index` is `null` if the last read message is not known.)
+
+Steps:
+
+* After `.readJLR` is called, the object's `.lastreads` array is expected to contain an element which has `UserCRC` property equal to `.crc32(username)`. If there's no such element, `callback(null, null)` is immediately called and `.readFixedHeaderInfoStruct` and `.readJDX` is never called.
+
+* Then an attempt is made to find an `index` such as `.indexStructure[index].MessageNum0 + basemsgnum === LastRead` where `basemsgnum` is taken from `.readFixedHeaderInfoStruct` and `LastRead` is a property from the element in `.lastreads` that was found on the previous step. The search for `index` goes backwards through `.indexStructure` because the last read message is more likely to be found among the latest received messages.
+
 ### readHeader(number, callback)
 
 Asynchronously reads a JAM header by its number (calling `.readJDX` and `.readJHR` methods in the process).

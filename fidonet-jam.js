@@ -215,6 +215,39 @@ JAM.prototype.readFixedHeaderInfoStruct = function(callback){ // err, struct
    });
 };
 
+JAM.prototype.indexLastRead = function(username, callback){ // err, index
+   var _JAM = this;
+   _JAM.readJLR(function(err){
+      if (err) return callback(err);
+      var findCRC = _JAM.crc32(username);
+      var foundItems = _JAM.lastreads.filter(function(element){
+         return element.UserCRC === findCRC;
+      });
+      if( foundItems.length < 1 ) return callback(null, null);
+      var foundLastRead = foundItems[0].LastRead;
+      foundItems = null;
+
+      _JAM.readFixedHeaderInfoStruct(function(err, struct){
+         if (err) return callback(err);
+         _JAM.readJDX(function(err){
+            if (err) return callback(err);
+
+            var nextIDX = _JAM.size() - 1;
+            while( nextIDX > 0 ){
+               if(
+                  _JAM.indexStructure[nextIDX].MessageNum0 +
+                  struct.basemsgnum ===
+                  foundLastRead
+               ){
+                  return callback(null, nextIDX);
+               } else nextIDX--;
+            }
+            return callback(null, null);
+         });
+      });
+   });
+};
+
 JAM.prototype.readHeader = function(number, callback){ // err, struct
    var _JAM = this;
    if( number <= 0 ){

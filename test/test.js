@@ -64,6 +64,19 @@ describe('Fidonet JAM', function(){
          done();
       });
    });
+   it('correctly calculates the last read position', function(done){
+      blog.indexLastRead('Mithgol the Webmaster', function(err, idx){
+         if (err) throw err;
+         assert.equal(idx, 9150);
+
+         blog.indexLastRead('some unknown user', function(err, idx){
+            if (err) throw err;
+            assert.equal(idx, null);
+
+            done();
+         });
+      });
+   });
    it('reads the '+headSampleth+
       ' header, its encoding and contents, clears cache',
    function(done){
