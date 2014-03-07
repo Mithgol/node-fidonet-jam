@@ -312,6 +312,14 @@ useDefaultIfUnknown: true
 
 Before `messageText` is given to the callback, all occurences of the Fidonet line ending (`CR`, `'\r'`) are replaced by the Unix line ending (`LF`, `'\n'`).
 
+### numbersForMSGID(MSGID, callback)
+
+Using the given `MSGID` string, generates an array containing numbers of messages identified by that MSGID. Then `callback(error, numbers)` is called.
+
+Possible number values start from (and including) `1` and go to (and including) `.size()` without gaps, ignoring the internal `MessageNumber` values in the headers.
+
+The array of numbers may be empty if the message base does not contain a message that corresponds to the given MSGID. The array may contain one number if such message is found. However, it may contain **several** numbers (corresponding to several messages): though FTS-0009 states that two messages from a given system may not have the same serial number within a three years period, the message base itself may easily span more than three years.
+
 ## Locking files
 
 The module **does not** lock any files and **does not** create any “lock files” (flag files, semaphore files). The module's caller should control the access to the message base.
