@@ -42,14 +42,25 @@ var JAM = function(echoPath){
    this.lastreads = null;
 };
 
-JAM.prototype.crc32 = function(inString, keepCase){
-   if( !keepCase ){
+JAM.prototype.crc32 = function(inString, options){
+   if( options === true ){
+      options = {keepCase: true};
+   } else if( typeof options !== 'object' ){
+      options = {};
+   }
+
+   if( !options.keepCase ){
       inString = inString.replace(/[A-Z]/g, function(upperChar){
          return upperChar.toLowerCase();
       });
    }
+   if( !sb.isEncoding(options.encoding) ){
+      options.encoding = 'utf8';
+   }
+
+   var inBuf = sb.strToBuf(inString, options.encoding);
    // 4294967295 is the maximum 32-bit integer
-   return 4294967295 - crc32.unsigned( inString );
+   return 4294967295 - crc32.unsigned( inBuf );
 };
 
 JAM.prototype.readJHR = function(callback){ // (err)
@@ -215,11 +226,16 @@ JAM.prototype.readFixedHeaderInfoStruct = function(callback){ // err, struct
    });
 };
 
-JAM.prototype.indexLastRead = function(username, callback){ // err, index
+JAM.prototype.indexLastRead = function(username, encoding, callback){//err,idx
+   if( typeof callback === 'undefined' ){
+      callback = encoding;
+      encoding = 'utf8';
+   }
+
    var _JAM = this;
    _JAM.readJLR(function(err){
       if (err) return callback(err);
-      var findCRC = _JAM.crc32(username);
+      var findCRC = _JAM.crc32(username, {encoding: encoding});
       var foundItems = _JAM.lastreads.filter(function(element){
          return element.UserCRC === findCRC;
       });
