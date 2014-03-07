@@ -41,7 +41,7 @@ The optional `options` parameter is an object with two optional properties:
 
 * `keepCase` property, if it's present and `true`, dictates that the case of the given string is not altered before CRC-32 is calculated;
 
-* `encoding` property (it defaults to `'utf8'`) may contain an encoding of the given `string` (the encoding has to be a known encoding of [Node.js Buffers](http://nodejs.org/docs/latest/api/buffer.html#buffer_buffer) or known to the [`singlebyte`](https://github.com/Mithgol/node-singlebyte) module).
+* `encoding` property (it defaults to `'utf8'`) specifies how the given `string` should be encoded to a Node.js Buffer before its CRC32 hash is calculated. (The given encoding has to be a known encoding of [Node.js Buffers](http://nodejs.org/docs/latest/api/buffer.html#buffer_buffer) or known to the [`singlebyte`](https://github.com/Mithgol/node-singlebyte) module.)
 
 For simplicity, `true` value of the `options` parameter may be given instead of the `{keepCase: true}` object.
 
@@ -137,7 +137,7 @@ This property has to be taken into account when an application calculates t
 
 Finds out which message was last read by the given user, calling `.readJLR` and (probably) `.readFixedHeaderInfoStruct` and `.readJDX` in the process.
 
-The user is designated by a `username` string and optional `encoding` string (it defaults to `'utf8'`) containing the encoding of the given `username`. That encoding, if given, has to be a known encoding of [Node.js Buffers](http://nodejs.org/docs/latest/api/buffer.html#buffer_buffer) or known to the [`singlebyte`](https://github.com/Mithgol/node-singlebyte) module.
+The user is designated by a `username` string and optional `encoding` string (it defaults to `'utf8'`) containing the encoding that is applied to the given `username` before CRC-32 calculations. That encoding, if given, has to be a known encoding of [Node.js Buffers](http://nodejs.org/docs/latest/api/buffer.html#buffer_buffer) or known to the [`singlebyte`](https://github.com/Mithgol/node-singlebyte) module. It becomes necessary only if `username` is non-Latin **and** the `.jlr` file (JAM lastread storage) is generated by (or shared with) some Fidonet application that does not use UTF-8.
 
 Afterwards `callback(error, index)` is called where `index` is the (zero-based) position of that last read message in the object's `.indexStructure` array. (However, `index` becomes `null` if the last read message is not known.)
 
