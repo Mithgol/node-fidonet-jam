@@ -563,6 +563,32 @@ JAM.prototype.readAllHeaders = function(callback){ // err, struct
    });
 };
 
+JAM.prototype.numbersForMSGID = function(MSGID, callback){ // err, array
+   var _JAM = this;
+   _JAM.readAllHeaders(function(err, data){
+      if (err) return callback(err);
+
+      var encodingToCRC = {};
+      var resultArray = data.MessageHeaders.map(function(hdr, idx){
+         var checkEncoding = _JAM.encodingFromHeader(hdr);
+         if( !sb.isEncoding(checkEncoding) ) return null;
+
+         var checkCRC = encodingToCRC[checkEncoding];
+         if( typeof checkCRC === 'undefined' ){
+            checkCRC = _JAM.crc32(MSGID, {encoding: checkEncoding});
+            encodingToCRC[checkEncoding] = checkCRC;
+         }
+
+         if( hdr.MSGIDcrc === checkCRC ) return idx+1;
+         return null;
+      }).filter(function(number){
+         return number !== null;
+      });
+
+      callback(null, resultArray);
+   });
+};
+
 JAM.prototype.errors = {
    NOT_A_POSITIVE: "The message's number must be positive!",
    TOO_BIG: "The message's number exceed the message base's size!",

@@ -6,6 +6,7 @@ var util = require('util');
 var headCount = 9151;
 var headSample = 8222;
 var headSampleth = '8222nd';
+var headSampleMSGID = '2:5063/88 504b3fb5';
 
 describe('Fidonet JAM', function(){
    var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
@@ -158,6 +159,19 @@ describe('Fidonet JAM', function(){
                   data.MessageHeaders[head].MessageNumber
                );
             }
+            done();
+         });
+      });
+   });
+   it('the cache is cleared, then a MSGID search is correct', function(done){
+      blog.clearCache();
+      blog.numbersForMSGID(headSampleMSGID, function(err, arr){
+         if (err) throw err;
+         assert.deepEqual(arr, [headSample]);
+
+         blog.numbersForMSGID('some wrong MSGID', function(err, arr){
+            if (err) throw err;
+            assert.deepEqual(arr, []);
             done();
          });
       });
