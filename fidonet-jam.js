@@ -564,6 +564,7 @@ JAM.prototype.readAllHeaders = function(callback){ // err, struct
 };
 
 JAM.prototype.numbersForMSGID = function(MSGID, callback){ // err, array
+   if( !Array.isArray(MSGID) ) MSGID = [ MSGID ];
    var _JAM = this;
    _JAM.readAllHeaders(function(err, data){
       if (err) return callback(err);
@@ -575,11 +576,17 @@ JAM.prototype.numbersForMSGID = function(MSGID, callback){ // err, array
 
          var checkCRC = encodingToCRC[checkEncoding];
          if( typeof checkCRC === 'undefined' ){
-            checkCRC = _JAM.crc32(MSGID, {encoding: checkEncoding});
+            checkCRC = MSGID.map(function(someMSGID){
+               return _JAM.crc32(someMSGID, {encoding: checkEncoding});
+            });
             encodingToCRC[checkEncoding] = checkCRC;
          }
 
-         if( hdr.MSGIDcrc === checkCRC ) return idx+1;
+         for( var i = 0; i < checkCRC.length; i++ ){
+            if( hdr.MSGIDcrc === checkCRC[i] ){
+               return idx+1;
+            }
+         }
          return null;
       }).filter(function(number){
          return number !== null;

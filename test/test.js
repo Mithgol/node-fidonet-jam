@@ -169,10 +169,17 @@ describe('Fidonet JAM', function(){
          if (err) throw err;
          assert.deepEqual(arr, [headSample]);
 
-         blog.numbersForMSGID('some wrong MSGID', function(err, arr){
+         blog.numbersForMSGID([
+            headSampleMSGID, 'some wrong MSGID'
+         ], function(err, arr){
             if (err) throw err;
-            assert.deepEqual(arr, []);
-            done();
+            assert.deepEqual(arr, [headSample]);
+
+            blog.numbersForMSGID('some wrong MSGID', function(err, arr){
+               if (err) throw err;
+               assert.deepEqual(arr, []);
+               done();
+            });
          });
       });
    });
