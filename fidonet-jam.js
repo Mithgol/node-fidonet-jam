@@ -529,36 +529,32 @@ JAM.prototype.readAllHeaders = function(callback){ // err, struct
    _JAM.readJDX(function(err){
       if (err) return callback(err);
 
-      _JAM.readJHR(function(err){
+      _JAM.readFixedHeaderInfoStruct(function(err, FixedHeaderInfoStruct){
          if (err) return callback(err);
 
-         _JAM.readFixedHeaderInfoStruct(function(err, FixedHeaderInfoStruct){
-            if (err) return callback(err);
+         var structure = {
+            'FixedHeader': FixedHeaderInfoStruct,
+            'MessageHeaders': []
+         };
+         var nextHeaderNumber = 0;
+         var baseSize = _JAM.size();
 
-            var structure = {
-               'FixedHeader': FixedHeaderInfoStruct,
-               'MessageHeaders': []
-            };
-            var nextHeaderNumber = 0;
-            var baseSize = _JAM.size();
+         var nextHeaderProcessor = function(){
+            if( nextHeaderNumber >= baseSize ){
+               // all headers are processed
+               return callback(null, structure);
+            }
+            // process the next header
+            nextHeaderNumber++;
+            _JAM.readHeader(nextHeaderNumber, function(err, nextHeader){
+               if(err) return callback(err);
 
-            var nextHeaderProcessor = function(){
-               if( nextHeaderNumber >= baseSize ){
-                  // all headers are processed
-                  return callback(null, structure);
-               }
-               // process the next header
-               nextHeaderNumber++;
-               _JAM.readHeader(nextHeaderNumber, function(err, nextHeader){
-                  if(err) return callback(err);
+               structure.MessageHeaders.push( nextHeader );
+               setImmediate(nextHeaderProcessor);
+            });
+         };
 
-                  structure.MessageHeaders.push( nextHeader );
-                  setImmediate(nextHeaderProcessor);
-               });
-            };
-
-            nextHeaderProcessor();
-         });
+         nextHeaderProcessor();
       });
    });
 };
