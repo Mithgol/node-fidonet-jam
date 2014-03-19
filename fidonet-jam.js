@@ -578,11 +578,8 @@ JAM.prototype.numbersForMSGID = function(MSGID, callback){ // err, array
             encodingToCRC[checkEncoding] = checkCRC;
          }
 
-         for( var i = 0; i < checkCRC.length; i++ ){
-            if( hdr.MSGIDcrc === checkCRC[i] ){
-               return idx+1;
-            }
-         }
+         if( checkCRC.indexOf(hdr.MSGIDcrc) > -1 ) return idx+1;
+
          return null;
       }).filter(function(number){
          return number !== null;
