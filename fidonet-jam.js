@@ -594,16 +594,20 @@ JAM.prototype.getParentNum = function(number, callback){ // err, parentNum
    _JAM.readHeader(number, function(err, header){
       if (err) return callback(err);
 
+      var replyTo = header.ReplyTo;
+
       _JAM.readFixedHeaderInfoStruct(function(err, fixedHeaderInfoStruct){
          if (err) return callback(err);
 
-         _JAM.readHeader(number, function(error, header){
-            if (err) return callback(err);
+         var basemsgnum = fixedHeaderInfoStruct.basemsgnum;
+         if( replyTo < basemsgnum ) return callback(null, null);
 
-            var arrNum0 = _JAM.indexStructure.map(function(){
-               return this.MessageNum0;
-            });
-         });
+         var idx0 = _JAM.indexStructure.map(function(){
+            return this.MessageNum0;
+         }).indexOf(replyTo - basemsgnum);
+
+         if( idx0 < 0 ) return callback(null, null);
+         return callback(null, idx0+1);
       });
    });
 };
