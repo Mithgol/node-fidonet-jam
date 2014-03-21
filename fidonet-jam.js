@@ -589,6 +589,25 @@ JAM.prototype.numbersForMSGID = function(MSGID, callback){ // err, array
    });
 };
 
+JAM.prototype.getParentNum = function(number, callback){ // err, parentNum
+   var _JAM = this;
+   _JAM.readHeader(number, function(err, header){
+      if (err) return callback(err);
+
+      _JAM.readFixedHeaderInfoStruct(function(err, fixedHeaderInfoStruct){
+         if (err) return callback(err);
+
+         _JAM.readHeader(number, function(error, header){
+            if (err) return callback(err);
+
+            var arrNum0 = _JAM.indexStructure.map(function(){
+               return this.MessageNum0;
+            });
+         });
+      });
+   });
+};
+
 JAM.prototype.errors = {
    NOT_A_POSITIVE: "The message's number must be positive!",
    TOO_BIG: "The message's number exceed the message base's size!",
