@@ -328,6 +328,12 @@ Possible number values start from (and including) `1` and go to (and includin
 
 The array of numbers may be empty if the message base does not contain messages that correspond to the given MSGIDs. The array may contain one number per MSGID if such messages are found. However, it may contain **several** numbers (corresponding to several messages) per one MSGID: though FTS-0009 states that two messages from a given system may not have the same serial number within a three years period, the message base itself may easily span more than three years.
 
+### getParentNumber(number, callback)
+
+Using the given message's number, finds out that message's parent in the tree of replies (i.e. the message that the given message replies to), calling `.readHeader` and `.readFixedHeaderInfoStruct` in the process. Then `callback(error, parentNumber)` is called, where `parentNumber === null` if the parent message cannot be found (for example, if the given message is not a reply).
+
+Possible number values (of the given and the found number) start from (and including) `1` and go to (and including) `.size()` without gaps. (The internal `MessageNumber` values are used only internally in this method.)
+
 ## Locking files
 
 The module **does not** lock any files and **does not** create any “lock files” (flag files, semaphore files). The module's caller should control the access to the message base.
