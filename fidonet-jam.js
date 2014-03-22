@@ -589,7 +589,7 @@ JAM.prototype.numbersForMSGID = function(MSGID, callback){ // err, array
    });
 };
 
-JAM.prototype.getParentNum = function(number, callback){ // err, parentNum
+JAM.prototype.getParentNumber = function(number, callback){//err, parentNumber
    var _JAM = this;
    _JAM.readHeader(number, function(err, header){
       if (err) return callback(err);
