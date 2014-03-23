@@ -366,15 +366,13 @@ var normalizedEncoding = function(encoding){
 };
 
 JAM.prototype.encodingFromHeader = function(header){
-   var fields = header.Subfields;
-   var kludges = [];
-   var i;
-   for( i = 0; i < fields.length; i++ ){
-      if( fields[i].LoID === 2000 ){ // FTSKLUDGE
-         kludges.push( fields[i].Buffer.toString('ascii').toLowerCase() );
-      }
-   }
-   for( i = 0; i < kludges.length; i++ ){
+   var kludges = header.Subfields.filter(function(subfield){
+      return subfield.LoID === 2000; // FTSKLUDGE
+   }).map(function(kludgeField){
+      return kludgeField.Buffer.toString('ascii').toLowerCase();
+   });
+
+   for( var i = 0; i < kludges.length; i++ ){
       var parts = /^(chrs|charset):\s*(\S+)(\s.*)?$/.exec(kludges[i]);
       if( parts !== null ){
          var chrs = parts[2];
