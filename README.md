@@ -143,7 +143,7 @@ Afterwards `callback(error, index)` is called where `index` is the (zero-based)
 
 Steps:
 
-* After `.readJLR` is called, the object's `.lastreads` array is expected to contain an element which has `UserCRC` property equal to `.crc32(username, {encoding: encoding})`. If there's no such element, `callback(null, null)` is immediately called and `.readFixedHeaderInfoStruct` and `.readJDX` is never called.
+* After `.readJLR` is called, the object's `.lastreads` array is expected to contain an element which has `UserCRC` property equal to `.crc32(username, {encoding: encoding})`. If there's no such element, `callback(null, null)` is immediately called (and thus `.readFixedHeaderInfoStruct` and `.readJDX` are never called).
 
 * Then an attempt is made to find an `index` such as `.indexStructure[index].MessageNum0 + basemsgnum === LastRead` where `basemsgnum` is taken from `.readFixedHeaderInfoStruct` and `LastRead` is a property from the element in `.lastreads` that was found on the previous step. The search for such `index` goes backwards through `.indexStructure` because the last read message is more likely to be found among the latest received messages.
 
@@ -322,9 +322,9 @@ Before `messageText` is given to the callback, all occurences of the Fidonet 
 
 ### numbersForMSGID(MSGID, callback)
 
-Using the given `MSGID` string (or an array of MSGID strings), generates an array containing numbers of messages identified by any of the given MSGIDs, calling `readAllHeaders` in the process. Then `callback(error, numbers)` is called.
+Using the given `MSGID` string (or an array of MSGID strings), generates an array containing numbers of messages identified by any of the given MSGIDs, calling `.readAllHeaders` in the process. Then `callback(error, numbers)` is called.
 
-Possible number values start from (and including) `1` and go to (and including) `.size()` without gaps, ignoring the internal `MessageNumber` values in the headers. (Note: `.size()` becomes available because `readAllHeaders` calls `readJDX`.)
+Possible number values start from (and including) `1` and go to (and including) `.size()` without gaps, ignoring the internal `MessageNumber` values in the headers. (Note: `.size()` becomes available because `.readAllHeaders` calls `.readJDX`.)
 
 The array of numbers may be empty if the message base does not contain messages that correspond to the given MSGIDs. The array may contain one number per MSGID if such messages are found. However, it may contain **several** numbers (corresponding to several messages) per one MSGID: though FTS-0009 states that two messages from a given system may not have the same serial number within a three years period, the message base itself may easily span more than three years.
 
