@@ -141,7 +141,7 @@ The user is designated by a `username` string and optional `encoding` string (i
 
 Afterwards `callback(error, index)` is called where `index` is the (zero-based) position of that last read message in the object's `.indexStructure` array. (However, `index` becomes `null` if the last read message is not known.)
 
-Steps:
+That's done in a couple of steps:
 
 * After `.readJLR` is called, the object's `.lastreads` array is expected to contain an element which has `UserCRC` property equal to `.crc32(username, {encoding: encoding})`. If there's no such element, `callback(null, null)` is immediately called (and thus `.readFixedHeaderInfoStruct` and `.readJDX` are never called).
 
