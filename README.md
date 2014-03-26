@@ -354,12 +354,6 @@ It is necessary to install [Mocha](http://visionmedia.github.io/mocha/) and [JSH
 
 After that you may run `npm test` (in the directory of the Fidonet JAM module).
 
-## TODO
-
-A couple of possible improvements:
-
-* Building trees of replies, using `ReplyTo`, `Reply1st` and `Replynext` properties of the headers.
-
 ## License
 
 MIT License, see the `LICENSE` file.
