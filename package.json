@@ -12,7 +12,7 @@
 "dependencies": {
    "buffer-crc32": "0.2.1",
    "moment": "~2.3.0",
-   "singlebyte": "~1.0.7"
+   "singlebyte": "~1.0.10"
 },
 "scripts": {
    "pretest": "jshint fidonet-jam.js test/test.js",
