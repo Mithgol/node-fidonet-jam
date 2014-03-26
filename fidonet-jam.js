@@ -373,9 +373,9 @@ JAM.prototype.encodingFromHeader = function(header){
    });
 
    for( var i = 0; i < kludges.length; i++ ){
-      var parts = /^(chrs|charset):\s*(\S+)(\s.*)?$/.exec(kludges[i]);
+      var parts = /^(?:chrs|charset):\s*(\S+)(\s.*)?$/.exec(kludges[i]);
       if( parts !== null ){
-         var chrs = parts[2];
+         var chrs = parts[1];
          if( chrs === 'ibmpc' ){
             for( var j = 0; j < kludges.length; j++ ){
                parts = /^codepage:\s*(\S+)(\s.*)?$/.exec(kludges[i]);
