@@ -600,8 +600,8 @@ JAM.prototype.getParentNumber = function(number, callback){//err, parentNumber
          var basemsgnum = fixedHeaderInfoStruct.basemsgnum;
          if( replyTo < basemsgnum ) return callback(null, null);
 
-         var idx0 = _JAM.indexStructure.map(function(){
-            return this.MessageNum0;
+         var idx0 = _JAM.indexStructure.map(function(indexItem){
+            return indexItem.MessageNum0;
          }).indexOf(replyTo - basemsgnum);
 
          if( idx0 < 0 ) return callback(null, null);

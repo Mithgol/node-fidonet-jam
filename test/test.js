@@ -7,6 +7,8 @@ var headCount = 9151;
 var headSample = 8222;
 var headSampleth = '8222nd';
 var headSampleMSGID = '2:5063/88 504b3fb5';
+var childSample = 4834;
+var parentSample = 4833;
 
 describe('Fidonet JAM', function(){
    var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
@@ -181,6 +183,13 @@ describe('Fidonet JAM', function(){
                done();
             });
          });
+      });
+   });
+   it('gets the correct number of the parent', function(done){
+      blog.getParentNumber(childSample, function(err, parentNumber){
+         if (err) throw err;
+         assert.equal(parentNumber, parentSample);
+         done();
       });
    });
 });
