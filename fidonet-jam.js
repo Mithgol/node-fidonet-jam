@@ -610,6 +610,29 @@ JAM.prototype.getParentNumber = function(number, callback){//err, parentNumber
    });
 };
 
+JAM.prototype.get1stChildNumber = function(number, callback){//err,childNumber
+   var _JAM = this;
+   _JAM.readHeader(number, function(err, header){
+      if (err) return callback(err);
+
+      var reply1st = header.Reply1st;
+
+      _JAM.readFixedHeaderInfoStruct(function(err, fixedHeaderInfoStruct){
+         if (err) return callback(err);
+
+         var basemsgnum = fixedHeaderInfoStruct.basemsgnum;
+         if( reply1st < basemsgnum ) return callback(null, null);
+
+         var idx0 = _JAM.indexStructure.map(function(indexItem){
+            return indexItem.MessageNum0;
+         }).indexOf(reply1st - basemsgnum);
+
+         if( idx0 < 0 ) return callback(null, null);
+         return callback(null, idx0+1);
+      });
+   });
+};
+
 JAM.prototype.errors = {
    NOT_A_POSITIVE: "The message's number must be positive!",
    TOO_BIG: "The message's number exceed the message base's size!",

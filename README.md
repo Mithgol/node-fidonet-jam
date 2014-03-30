@@ -334,6 +334,12 @@ Using the given message's number, finds out that message's parent in the tr
 
 Possible number values (of the given and the found number) start from (and including) `1` and go to (and including) `.size()` without gaps. (The internal `MessageNumber` values are used only internally in this method.)
 
+### get1stChildNumber(number, callback)
+
+Using the given message's number, finds out the number of its first child in the tree of replies (i.e. the first of the messages that reply to the given message), calling `.readHeader` and `.readFixedHeaderInfoStruct` in the process. Then `callback(error, childNumber)` is called, where `childNumber === null` if the given message has no replies.
+
+Possible number values (of the given and the found number) start from (and including) `1` and go to (and including) `.size()` without gaps. (The internal `MessageNumber` values are used only internally in this method.)
+
 ## Locking files
 
 The module **does not** lock any files and **does not** create any “lock files” (flag files, semaphore files). The module's caller should control the access to the message base.

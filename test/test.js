@@ -192,4 +192,11 @@ describe('Fidonet JAM', function(){
          done();
       });
    });
+   it('gets the correct number of the 1st child', function(done){
+      blog.get1stChildNumber(parentSample, function(err, childNumber){
+         if (err) throw err;
+         assert.equal(childNumber, childSample);
+         done();
+      });
+   });
 });
