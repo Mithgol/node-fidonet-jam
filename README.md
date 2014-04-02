@@ -167,7 +167,7 @@ The callback has the form `callback(error, header)`. That `header` has the foll
 
 * `MSGIDcrc` and `REPLYcrc` are the (32 bit) JAM CRC-32 values of the MSGID and REPLY lines of the message.
 
-* `ReplyTo`, `Reply1st` and `Replynext` are the (32 bit) values that are used in saving the tree of replies to a message (as seen in the bottom of the JAM specs).
+* `ReplyTo`, `Reply1st` and `ReplyNext` are the (32 bit) values that are used in saving the tree of replies to a message (as seen in the bottom of the JAM specs). **Note:** `ReplyNext` was called `Replynext` before version 2.0.0 (according to the upper table in the JAM specs; but that's probably a typo in the specs).
 
 * `DateWritten`, `DateReceived` and `DateProcessed` are the (32 bit) timestamps of the moments when the message was written, received and processed by a tosser (or a scanner).
 

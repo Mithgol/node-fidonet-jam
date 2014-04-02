@@ -1,7 +1,7 @@
 {
 "name": "fidonet-jam",
 "main": "fidonet-jam.js",
-"version": "1.8.0",
+"version": "2.0.0",
 "description": "Fidonet JAM message base parser",
 "keywords": ["Fidonet", "Fido", "JAM"],
 "author": { "name": "Mithgol the Webmaster" },
