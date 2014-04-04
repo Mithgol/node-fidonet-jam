@@ -218,7 +218,7 @@ The above description of possible `type` values is abridged (you may read the�
 
 Here's a header's screenshot for example:
 
-![(screenshot)](https://f.cloud.github.com/assets/1088720/1190661/8bed90ee-243a-11e3-98db-386ff496f5d2.gif)
+![(screenshot)](https://cloud.githubusercontent.com/assets/1088720/2612172/7a797f9a-bbba-11e3-8a29-a77938d3ff10.png)
 
 ### readAllHeaders(callback)
 
