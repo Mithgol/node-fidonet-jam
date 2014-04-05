@@ -37,6 +37,7 @@ var JAM = function(echoPath){
    this.echoPath = echoPath;
 
    this.JHR = null;
+   this.fixedHeader = null;
    this.indexStructure = null;
    this.JDT = null;
    this.lastreads = null;
@@ -168,6 +169,7 @@ JAM.prototype.clearCache = function(cache){
       case 'header':
       case 'headers':
          this.JHR = null;
+         this.fixedHeader = null;
       break;
       case 'text':
       case 'texts':
@@ -182,6 +184,7 @@ JAM.prototype.clearCache = function(cache){
       break;
       default:
          this.JHR = null;
+         this.fixedHeader = null;
          this.JDT = null;
          this.indexStructure = null;
          this.lastreads = null;
@@ -191,6 +194,7 @@ JAM.prototype.clearCache = function(cache){
 
 JAM.prototype.readFixedHeaderInfoStruct = function(callback){ // err, struct
    var _JAM = this;
+   if (_JAM.fixedHeader !== null) return callback(null);
 
    _JAM.readJHR(function(err){
       if (err) return callback(err);
@@ -222,7 +226,8 @@ JAM.prototype.readFixedHeaderInfoStruct = function(callback){ // err, struct
          _JAM.JHR.readUInt32LE(offsetJHR); //ulong
       //offsetJHR += 4;
 
-      callback(null, FixedHeaderInfoStruct);
+      _JAM.fixedHeader = FixedHeaderInfoStruct;
+      callback(null);
    });
 };
 
@@ -243,7 +248,7 @@ JAM.prototype.indexLastRead = function(username, encoding, callback){//err,idx
       var foundLastRead = foundItems[0].LastRead;
       foundItems = null;
 
-      _JAM.readFixedHeaderInfoStruct(function(err, struct){
+      _JAM.readFixedHeaderInfoStruct(function(err){
          if (err) return callback(err);
          _JAM.readJDX(function(err){
             if (err) return callback(err);
@@ -252,7 +257,7 @@ JAM.prototype.indexLastRead = function(username, encoding, callback){//err,idx
             while( nextIDX > 0 ){
                if(
                   _JAM.indexStructure[nextIDX].MessageNum0 +
-                  struct.basemsgnum ===
+                  _JAM.fixedHeader.basemsgnum ===
                   foundLastRead
                ){
                   return callback(null, nextIDX);
@@ -522,32 +527,30 @@ JAM.prototype.decodeMessage = function(header, decodeOptions, callback){
    });
 };
 
-JAM.prototype.readAllHeaders = function(callback){ // err, struct
+JAM.prototype.readAllHeaders = function(callback){ // err, messageHeaders
    var _JAM = this;
    _JAM.readJDX(function(err){
       if (err) return callback(err);
 
-      _JAM.readFixedHeaderInfoStruct(function(err, FixedHeaderInfoStruct){
+      var baseSize = _JAM.size();
+
+      _JAM.readFixedHeaderInfoStruct(function(err){
          if (err) return callback(err);
 
-         var structure = {
-            'FixedHeader': FixedHeaderInfoStruct,
-            'MessageHeaders': []
-         };
+         var messageHeaders = [];
          var nextHeaderNumber = 0;
-         var baseSize = _JAM.size();
 
          var nextHeaderProcessor = function(){
             if( nextHeaderNumber >= baseSize ){
                // all headers are processed
-               return callback(null, structure);
+               return callback(null, messageHeaders);
             }
             // process the next header
             nextHeaderNumber++;
             _JAM.readHeader(nextHeaderNumber, function(err, nextHeader){
                if(err) return callback(err);
 
-               structure.MessageHeaders.push( nextHeader );
+               messageHeaders.push( nextHeader );
                setImmediate(nextHeaderProcessor);
             });
          };
@@ -560,11 +563,11 @@ JAM.prototype.readAllHeaders = function(callback){ // err, struct
 JAM.prototype.numbersForMSGID = function(MSGID, callback){ // err, array
    if( !Array.isArray(MSGID) ) MSGID = [ MSGID ];
    var _JAM = this;
-   _JAM.readAllHeaders(function(err, data){
+   _JAM.readAllHeaders(function(err, messageHeaders){
       if (err) return callback(err);
 
       var encodingToCRC = {};
-      var resultArray = data.MessageHeaders.map(function(hdr, idx){
+      var resultArray = messageHeaders.map(function(hdr, idx){
          var checkEncoding = _JAM.encodingFromHeader(hdr);
          if( !sb.isEncoding(checkEncoding) ) return null;
 
@@ -594,10 +597,10 @@ JAM.prototype.getParentNumber = function(number, callback){//err, parentNumber
 
       var replyTo = header.ReplyTo;
 
-      _JAM.readFixedHeaderInfoStruct(function(err, fixedHeaderInfoStruct){
+      _JAM.readFixedHeaderInfoStruct(function(err){
          if (err) return callback(err);
 
-         var basemsgnum = fixedHeaderInfoStruct.basemsgnum;
+         var basemsgnum = _JAM.fixedHeader.basemsgnum;
          if( replyTo < basemsgnum ) return callback(null, null);
 
          var idx0 = _JAM.indexStructure.map(function(indexItem){
@@ -617,10 +620,10 @@ JAM.prototype.get1stChildNumber = function(number, callback){//err,childNumber
 
       var reply1st = header.Reply1st;
 
-      _JAM.readFixedHeaderInfoStruct(function(err, fixedHeaderInfoStruct){
+      _JAM.readFixedHeaderInfoStruct(function(err){
          if (err) return callback(err);
 
-         var basemsgnum = fixedHeaderInfoStruct.basemsgnum;
+         var basemsgnum = _JAM.fixedHeader.basemsgnum;
          if( reply1st < basemsgnum ) return callback(null, null);
 
          var idx0 = _JAM.indexStructure.map(function(indexItem){

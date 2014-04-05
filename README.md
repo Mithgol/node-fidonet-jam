@@ -95,13 +95,13 @@ Returns `.indexStructure.length` property (or `undefined` when `.indexStructure`
 
 ### clearCache(cache)
 
-Writes `null` to the `JHR`, `JDT`, `lastreads` and `indexStructure` properties of the object.
+Writes `null` to the `JHR`, `fixedHeader`, `JDT`, `lastreads` and `indexStructure` properties of the object.
 
 The memory cache becomes empty and thus the next `readJHR`, `readJDT`, `readJLR` or `readJDX` will read the data from the disk again.
 
 The behaviour can be altered by passing a string `cache` parameter:
 
-* `cache === 'header'` (or `'headers'`) — only `JHR` becomes `null`;
+* `cache === 'header'` (or `'headers'`) — only `JHR` and `fixedHeader` become `null`;
 
 * `cache === 'text'` (or `'texts'`) — only `JDT` becomes `null`;
 
@@ -113,9 +113,9 @@ The behaviour can be altered by passing a string `cache` parameter:
 
 ### readFixedHeaderInfoStruct(callback)
 
-Asynchronously reads the “JAM fixed header” of the echo base (calling `.readJHR` method in the process).
+Asynchronously reads the “JAM fixed header” of the echo base (calling `.readJHR` method in the process) and stores it in the object's `.fixedHeader` property. Then calls `callback(error)`.
 
-Then calls `callback(error, data)`. That `data` is an object with the following properties:
+That “JAM fixed header” is an object with the following properties:
 
 * `Signature` is a four-bytes Buffer (should contain `'JAM\0'`).
 
@@ -129,9 +129,9 @@ Then calls `callback(error, data)`. That `data` is an object with the followin
 
 * `basemsgnum` is the (32 bit) lowest message number in the index file.
 
-According to the JAM specifications, the `basemsgnum` property determines the lowest message number in the index file. The value for this field is one (`1`) when a message area is first created. By using this property, a message area can be packed (when deleted messages are removed) without renumbering it. For example, if BaseMsgNum contains `500`, then the first index record points to message number 500.
+According to the JAM specifications, the `basemsgnum` property determines the lowest message number in the index file. The value for this field is one (`1`) when a message area is first created. By using this property, a message area can be packed (when deleted messages are removed) without renumbering it. For example, if BaseMsgNum contains `500`, then the first index record points to message number 500. This property has to be taken into account when an application calculates the next available message number (for creating new messages) as well as the highest and lowest message number in a message area.
 
-This property has to be taken into account when an application calculates the next available message number (for creating new messages) as well as the highest and lowest message number in a message area.
+The contents of “JAM fixed header” are cached. Subsequent calls to `.readJHR` won't happen unless the object's `.fixedHeader` property is `null`.
 
 ### indexLastRead(username, [encoding], callback)
 
@@ -222,13 +222,11 @@ Here's a header's screenshot for example:
 
 ### readAllHeaders(callback)
 
-Asynchronously reads all JAM headers from the base (calling `.readJDX` and `.readJHR`, `.readFixedHeaderInfoStruct` and `.readHeader` methods in the process). Then calls `callback(error, data)`. That `data` is an object with the following properties:
+Asynchronously reads all JAM headers from the base (calling `.readJDX`, `.readFixedHeaderInfoStruct` and `.readHeader` methods in the process; therefore `.JHR` and `.fixedHeader` properties of the object are populated, though the latter is not used anywhere in the method).
 
-* `FixedHeader` is the header asynchronously read by the `.readFixedHeaderInfoStruct` method.
+Then calls `callback(error, messageHeaders)`, where `messageHeaders` is an array containing JAM headers of the individual messages as returned by `.readHeader`.
 
-* `MessageHeaders` is an array containing JAM headers of the individual messages as returned by `.readHeader`.
-
-**Note 1: ** as in any other JavaScript array, the indexes of `MessageHeaders` are 0-based, while the `number` parameter of the `.readHeader` method and the `.MessageNumber` property of the header are 1-based.
+**Note 1: ** as in any other JavaScript array, the indexes of `messageHeaders` are 0-based, while the `number` parameter of the `.readHeader` method and the `.MessageNumber` property of the header are 1-based.
 
 **Note 2: ** scanning of the whole base takes some time. As tests show, almost a second (or several seconds on an older computer or older Node.js engine) is necessary to scan even a single echo base containing 9151 messages. To avoid freezing of the Node.js event loop, each `.readHeader` call is postponed with `setImmediate()`.
 

@@ -51,18 +51,17 @@ describe('Fidonet JAM', function(){
       });
    });
    it('reads the fixed header and also can clear the cache', function(done){
-      blog.readFixedHeaderInfoStruct(function(err, FixedHeaderInfoStruct){
+      blog.readFixedHeaderInfoStruct(function(err){
          if (err) throw err;
 
-         assert.equal(FixedHeaderInfoStruct.activemsgs, headCount);
+         assert.equal(blog.fixedHeader.activemsgs, headCount);
          console.log('\nThe fixed header:');
-         console.log(util.inspect(FixedHeaderInfoStruct,
-            false, Infinity, true
-         ));
+         console.log( util.inspect(blog.fixedHeader, false, Infinity, true) );
 
          assert.notEqual(blog.JHR, null);
          blog.clearCache('headers');
          assert.equal(blog.JHR, null);
+         assert.equal(blog.fixedHeader, null);
 
          done();
       });
@@ -140,10 +139,10 @@ describe('Fidonet JAM', function(){
       });
    });
    it('reads '+headCount+' headers from the message base', function(done){
-      blog.readAllHeaders(function(err, data){
+      blog.readAllHeaders(function(err, messageHeaders){
          if (err) throw err;
 
-         assert.equal(data.MessageHeaders.length, headCount);
+         assert.equal(messageHeaders.length, headCount);
          done();
       });
    });
@@ -151,16 +150,16 @@ describe('Fidonet JAM', function(){
       blog.readJDX(function(err){
          if (err) throw err;
 
-         blog.readAllHeaders(function(err, data){
+         blog.readAllHeaders(function(err, messageHeaders){
             if (err) throw err;
 
-            for(var head=0; head < data.MessageHeaders.length; head++){
+            messageHeaders.forEach(function(currentHeader, headerIDX){
                assert.strictEqual(
-                  blog.indexStructure[head].MessageNum0 +
-                  data.FixedHeader.basemsgnum,
-                  data.MessageHeaders[head].MessageNumber
+                  blog.indexStructure[headerIDX].MessageNum0 +
+                  blog.fixedHeader.basemsgnum,
+                  currentHeader.MessageNumber
                );
-            }
+            });
             done();
          });
       });
