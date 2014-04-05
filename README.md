@@ -338,6 +338,12 @@ Using the given message's number, finds out the number of its first child in
 
 Possible number values (of the given and the found number) start from (and including) `1` and go to (and including) `.size()` without gaps. (The internal `MessageNumber` values are used only internally in this method.)
 
+### getNextChildNumber(number, callback)
+
+Using the given message's number, finds out the number of its next sibling in the tree of replies (i.e. the next of the messages that reply to the given message's parent), calling `.readHeader` and `.readFixedHeaderInfoStruct` in the process. Then `callback(error, siblingNumber)` is called, where `siblingNumber === null` if such sibling message cannot be found (for example, if the given message is not a reply or if it's the last of the replies ever given to its parent message).
+
+Possible number values (of the given and the found number) start from (and including) `1` and go to (and including) `.size()` without gaps. (The internal `MessageNumber` values are used only internally in this method.)
+
 ## Locking files
 
 The module **does not** lock any files and **does not** create any “lock files” (flag files, semaphore files). The module's caller should control the access to the message base.

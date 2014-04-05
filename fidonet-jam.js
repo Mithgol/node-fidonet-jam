@@ -636,6 +636,29 @@ JAM.prototype.get1stChildNumber = function(number, callback){//err,childNumber
    });
 };
 
+JAM.prototype.getNextChildNumber = function(number,callback){//err,childNumber
+   var _JAM = this;
+   _JAM.readHeader(number, function(err, header){
+      if (err) return callback(err);
+
+      var replyNext = header.ReplyNext;
+
+      _JAM.readFixedHeaderInfoStruct(function(err){
+         if (err) return callback(err);
+
+         var basemsgnum = _JAM.fixedHeader.basemsgnum;
+         if( replyNext < basemsgnum ) return callback(null, null);
+
+         var idx0 = _JAM.indexStructure.map(function(indexItem){
+            return indexItem.MessageNum0;
+         }).indexOf(replyNext - basemsgnum);
+
+         if( idx0 < 0 ) return callback(null, null);
+         return callback(null, idx0+1);
+      });
+   });
+};
+
 JAM.prototype.errors = {
    NOT_A_POSITIVE: "The message's number must be positive!",
    TOO_BIG: "The message's number exceed the message base's size!",

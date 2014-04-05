@@ -7,8 +7,10 @@ var headCount = 9151;
 var headSample = 8222;
 var headSampleth = '8222nd';
 var headSampleMSGID = '2:5063/88 504b3fb5';
-var childSample = 4834;
-var parentSample = 4833;
+var parentSample = 768;
+var childSample = 769;
+var siblingSample = 770;
+var nextSiblingSample = 771;
 
 describe('Fidonet JAM', function(){
    var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
@@ -195,6 +197,13 @@ describe('Fidonet JAM', function(){
       blog.get1stChildNumber(parentSample, function(err, childNumber){
          if (err) throw err;
          assert.equal(childNumber, childSample);
+         done();
+      });
+   });
+   it('gets the correct number of the next child', function(done){
+      blog.getNextChildNumber(siblingSample, function(err, siblingNumber){
+         if (err) throw err;
+         assert.equal(siblingNumber, nextSiblingSample);
          done();
       });
    });
