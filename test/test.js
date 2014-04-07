@@ -8,9 +8,7 @@ var headSample = 8222;
 var headSampleth = '8222nd';
 var headSampleMSGID = '2:5063/88 504b3fb5';
 var parentSample = 768;
-var childSample = 769;
-var siblingSample = 770;
-var nextSiblingSample = 771;
+var childrenSamples = [769, 770, 771, 772];
 
 describe('Fidonet JAM', function(){
    var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
@@ -187,7 +185,7 @@ describe('Fidonet JAM', function(){
       });
    });
    it('gets the correct number of the parent', function(done){
-      blog.getParentNumber(childSample, function(err, parentNumber){
+      blog.getParentNumber(childrenSamples[1], function(err, parentNumber){
          if (err) throw err;
          assert.equal(parentNumber, parentSample);
          done();
@@ -196,15 +194,27 @@ describe('Fidonet JAM', function(){
    it('gets the correct number of the 1st child', function(done){
       blog.get1stChildNumber(parentSample, function(err, childNumber){
          if (err) throw err;
-         assert.equal(childNumber, childSample);
+         assert.equal(childNumber, childrenSamples[0]);
          done();
       });
    });
    it('gets the correct number of the next child', function(done){
-      blog.getNextChildNumber(siblingSample, function(err, siblingNumber){
+      blog.getNextChildNumber(childrenSamples[2], function(err,siblingNumber){
          if (err) throw err;
-         assert.equal(siblingNumber, nextSiblingSample);
+         assert.equal(siblingNumber, childrenSamples[3]);
          done();
+      });
+   });
+   it('gets the correct lists of children', function(done){
+      blog.getChildrenNumbers(parentSample, function(err, childrenNumbers){
+         if (err) throw err;
+         assert.deepEqual(childrenNumbers, childrenSamples);
+
+         blog.getChildrenNumbers(headSample, function(err, childrenNumbers){
+            if (err) throw err;
+            assert.deepEqual(childrenNumbers, []);
+            done();
+         });
       });
    });
 });

@@ -344,6 +344,12 @@ Using the given message's number, finds out the number of its next sibling i
 
 Possible number values (of the given and the found number) start from (and including) `1` and go to (and including) `.size()` without gaps. (The internal `MessageNumber` values are used only internally in this method.)
 
+### getChildrenNumbers(number, callback)
+
+Using the given message's number, finds out the numbers of its children in the tree of replies (i.e. the messages that reply to the given message), calling `.get1stChildNumber` and (probably) `.getNextChildNumber` in the process. Then `callback(error, childrenNumbers)` is called, where `childrenNumbers` is an array (can be `[]` if the given message has no replies).
+
+Possible number values (of the given and the found numbers) start from (and including) `1` and go to (and including) `.size()` without gaps. (The internal `MessageNumber` values are used only internally in this method.)
+
 ## Locking files
 
 The module **does not** lock any files and **does not** create any “lock files” (flag files, semaphore files). The module's caller should control the access to the message base.
