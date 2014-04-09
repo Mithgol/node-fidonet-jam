@@ -4,7 +4,7 @@ The module is written in JavaScript and requires [Node.js](http://nodejs.org/
 
 ## Installing Fidonet JAM
 
-[![(npm package version)](https://nodei.co/npm/fidonet-jam.png?compact=true)](https://npmjs.org/package/fidonet-jam)
+[![(npm package version)](https://nodei.co/npm/fidonet-jam.png?downloads=true)](https://npmjs.org/package/fidonet-jam)
 
 * Latest packaged version: `npm install fidonet-jam`
 
