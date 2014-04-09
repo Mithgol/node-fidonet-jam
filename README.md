@@ -358,7 +358,7 @@ That's because Fidonet software uses different locking methods. For example, Go
 
 ## Testing Fidonet JAM
 
-[![(build testing status)](https://travis-ci.org/Mithgol/node-fidonet-jam.png?branch=master)](https://travis-ci.org/Mithgol/node-fidonet-jam)
+[![(build testing status)](https://travis-ci.org/Mithgol/node-fidonet-jam.svg?branch=master)](https://travis-ci.org/Mithgol/node-fidonet-jam)
 
 The tests currently contain ≈14 megabytes of input data and thus are not included in the npm package of the module. Use the version from GitHub.
 
