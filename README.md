@@ -318,13 +318,36 @@ useDefaultIfUnknown: true
 
 Before `messageText` is given to the callback, all occurences of the Fidonet line ending (`CR`, `'\r'`) are replaced by the Unix line ending (`LF`, `'\n'`).
 
-### numbersForMSGID(MSGID, callback)
+### numbersForMSGID(MSGID, options, callback)
 
 Using the given `MSGID` string (or an array of MSGID strings), generates an array containing numbers of messages identified by any of the given MSGIDs, calling `.readAllHeaders` in the process. Then `callback(error, numbers)` is called.
 
 Possible number values start from (and including) `1` and go to (and including) `.size()` without gaps, ignoring the internal `MessageNumber` values in the headers. (Note: `.size()` becomes available because `.readAllHeaders` calls `.readJDX`.)
 
 The array of numbers may be empty if the message base does not contain messages that correspond to the given MSGIDs. The array may contain one number per MSGID if such messages are found. However, it may contain **several** numbers (corresponding to several messages) per one MSGID: though FTS-0009 states that two messages from a given system may not have the same serial number within a three years period, the message base itself may easily span more than three years.
+
+When a non-ASCII MSGID is decoded, an optional `options` parameter is taken into account:
+
+* If `.encodingFromHeader` returns `null`, `options.defaultEncoding` is used.
+
+* If `.encodingFromHeader` returns an unknown encoding ([`require('singlebyte').isEncoding`](https://github.com/Mithgol/node-singlebyte#isencodingencodingname) returns `false`), `options.defaultEncoding` is used if `options.useDefaultIfUnknown` is true.
+
+* After that, if the encoding is still unknown, the default value of `options.defaultEncoding` is used. (That's `'cp866'`, see below.)
+
+The default values of `options`:
+
+```js
+{
+defaultEncoding: 'cp866',
+useDefaultIfUnknown: true
+}
+```
+
+### headersForMSGID(MSGID, options, callback)
+
+Works exactly as `.numbersForMSGID`, but an array of messages' headers (instead of their numbers) is given to the callback: `callback(error, headers)`.
+
+Each of the headers (found for the given MSGID or MSGIDs) has the same properties as a result of `.readHeader`. Each header is additionally given another property (`MessageIndex`) that contains its number as found in `.numbersForMSGID`. (Do not confuse it with JAM's internal `MessageNumber` property of the same header object.)
 
 ### getParentNumber(number, callback)
 

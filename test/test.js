@@ -184,6 +184,30 @@ describe('Fidonet JAM', function(){
          });
       });
    });
+   it('a MSGID search for a header is also correct', function(done){
+      blog.readHeader(headSample, function(err, header){
+         if (err) throw err;
+         header.MessageIndex = headSample;
+
+         blog.headersForMSGID(headSampleMSGID, function(err, arr){
+            if (err) throw err;
+            assert.deepEqual(arr, [header]);
+
+            blog.headersForMSGID([
+               headSampleMSGID, 'some wrong MSGID'
+            ], function(err, arr){
+               if (err) throw err;
+               assert.deepEqual(arr, [header]);
+
+               blog.headersForMSGID('some wrong MSGID', function(err, arr){
+                  if (err) throw err;
+                  assert.deepEqual(arr, []);
+                  done();
+               });
+            });
+         });
+      });
+   });
    it('gets the correct number of the parent', function(done){
       blog.getParentNumber(childrenSamples[1], function(err, parentNumber){
          if (err) throw err;

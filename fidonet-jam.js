@@ -397,6 +397,7 @@ JAM.prototype.encodingFromHeader = function(header){
 };
 
 var decodeDefaults = {
+   // for decodeHeader, decodeMessage, numbersForMSGID, headersForMSGID
    defaultEncoding: 'cp866',
    useDefaultIfUnknown: true
 };
@@ -407,7 +408,7 @@ JAM.prototype.decodeHeader = function(header, decodeOptions){
 
    var encoding = this.encodingFromHeader(header);
    if( encoding === null ) encoding = options.defaultEncoding;
-   if( !sb.isEncoding(encoding) && options.useDefaultIfUnknown ){
+   if( options.useDefaultIfUnknown && !sb.isEncoding(encoding) ){
       encoding = options.defaultEncoding;
    }
    if( !sb.isEncoding(encoding) ){
@@ -511,7 +512,7 @@ JAM.prototype.decodeMessage = function(header, decodeOptions, callback){
 
    var encoding = _JAM.encodingFromHeader(header);
    if( encoding === null ) encoding = options.defaultEncoding;
-   if( !sb.isEncoding(encoding) && options.useDefaultIfUnknown ){
+   if( options.useDefaultIfUnknown && !sb.isEncoding(encoding) ){
       encoding = options.defaultEncoding;
    }
    if( !sb.isEncoding(encoding) ){
@@ -560,8 +561,16 @@ JAM.prototype.readAllHeaders = function(callback){ // err, messageHeaders
    });
 };
 
-JAM.prototype.numbersForMSGID = function(MSGID, callback){ // err, array
+JAM.prototype.numbersForMSGID = function(
+   MSGID, decodeOptions, callback // (err, array)
+){
+   if(typeof callback === 'undefined' && typeof decodeOptions === 'function'){
+      callback = decodeOptions;
+      decodeOptions = void 0;
+   }
    if( !Array.isArray(MSGID) ) MSGID = [ MSGID ];
+   var options = extend(decodeDefaults, decodeOptions);
+
    var _JAM = this;
    _JAM.readAllHeaders(function(err, messageHeaders){
       if (err) return callback(err);
@@ -569,7 +578,13 @@ JAM.prototype.numbersForMSGID = function(MSGID, callback){ // err, array
       var encodingToCRC = {};
       var resultArray = messageHeaders.map(function(hdr, idx){
          var checkEncoding = _JAM.encodingFromHeader(hdr);
-         if( !sb.isEncoding(checkEncoding) ) return null;
+         if( checkEncoding === null ) checkEncoding = options.defaultEncoding;
+         if( options.useDefaultIfUnknown && !sb.isEncoding(checkEncoding) ){
+            checkEncoding = options.defaultEncoding;
+         }
+         if( !sb.isEncoding(checkEncoding) ){
+            checkEncoding = decodeDefaults.defaultEncoding;
+         }
 
          var checkCRC = encodingToCRC[checkEncoding];
          if( typeof checkCRC === 'undefined' ){
@@ -587,6 +602,51 @@ JAM.prototype.numbersForMSGID = function(MSGID, callback){ // err, array
       });
 
       callback(null, resultArray);
+   });
+};
+
+JAM.prototype.headersForMSGID = function(
+   MSGID, decodeOptions, callback // (err, array)
+){
+   if(typeof callback === 'undefined' && typeof decodeOptions === 'function'){
+      callback = decodeOptions;
+      decodeOptions = void 0;
+   }
+   if( !Array.isArray(MSGID) ) MSGID = [ MSGID ];
+   var options = extend(decodeDefaults, decodeOptions);
+
+   var _JAM = this;
+   _JAM.readAllHeaders(function(err, messageHeaders){
+      if (err) return callback(err);
+
+      var encodingToCRC = {};
+      var headersArray = messageHeaders.map(function(hdr, idx){
+         var checkEncoding = _JAM.encodingFromHeader(hdr);
+         if( checkEncoding === null ) checkEncoding = options.defaultEncoding;
+         if( options.useDefaultIfUnknown && !sb.isEncoding(checkEncoding) ){
+            checkEncoding = options.defaultEncoding;
+         }
+         if( !sb.isEncoding(checkEncoding) ){
+            checkEncoding = decodeDefaults.defaultEncoding;
+         }
+
+         var checkCRC = encodingToCRC[checkEncoding];
+         if( typeof checkCRC === 'undefined' ){
+            checkCRC = MSGID.map(function(someMSGID){
+               return _JAM.crc32(someMSGID, {encoding: checkEncoding});
+            });
+            encodingToCRC[checkEncoding] = checkCRC;
+         }
+
+         if( checkCRC.indexOf(hdr.MSGIDcrc) > -1 ){
+            hdr.MessageIndex = idx+1;
+            return hdr;
+         } else return null;
+      }).filter(function(header){
+         return header !== null;
+      });
+
+      callback(null, headersArray);
    });
 };
 
