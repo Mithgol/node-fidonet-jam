@@ -1,0 +1,46 @@
+**********************************************************************
+FGHI                                FIDONET GLOBAL HYPERTEXT INTERFACE
+**********************************************************************
+Status:             draft
+Revision:           WIP (a work in progress)
+Title:              Fidonet avatars
+Author:             Mithgol the Webmaster (Sergey Sokoloff, 2:5063/88)
+Revision Date:      16 Apr 2014
+-+--------------------------------------------------------------------
+Contents:
+   1. Status of this document
+   2. Introduction
+   3. Key words to indicate requirement levels
+-+--------------------------------------------------------------------
+
+1. Status of this document
+-+------------------------
+
+  This document is a draft of a Fidonet Standards Proposal (FSP).
+
+  This document specifies an optional Fidonet standard
+  that can be used in the Fidonet community.
+
+  Implementation of the standard defined in this document is not
+  mandatory, but all implementations are expected to adhere
+  to this standard.
+
+  Distribution of this document is unlimited, 
+  provided that its text is not altered without notice.
+
+2. Introduction
+-+-------------
+
+  ( to be written )
+
+3. Key words to indicate requirement levels
+-+-----------------------------------------
+
+  The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+  "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
+  and "OPTIONAL" in this document are to be interpreted as described
+  in FTA-1006 (based on RFC 2119).
+
+**********************************************************************
+EOTD                                               END OF THE DOCUMENT
+**********************************************************************
