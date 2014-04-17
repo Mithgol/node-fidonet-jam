@@ -1,11 +1,11 @@
 **********************************************************************
 FGHI                                FIDONET GLOBAL HYPERTEXT INTERFACE
 **********************************************************************
-Status:             draft
-Revision:           WIP (a work in progress)
-Title:              Fidonet avatars
-Author:             Mithgol the Webmaster (Sergey Sokoloff, 2:5063/88)
-Revision Date:      16 Apr 2014
+Status:         draft
+Revision:       WIP (a work in progress)
+Title:          Fidonet avatars
+Author:         Mithgol the Webmaster (aka Sergey Sokoloff, 2:5063/88)
+Revision Date:  17 Apr 2014
 -+--------------------------------------------------------------------
 Contents:
    1. Status of this document
@@ -31,7 +31,11 @@ Contents:
 2. Introduction
 -+-------------
 
-  ( to be written )
+  Fidonet avatars are pictures that serve as graphical representations
+  of individual authors of echomail and netmail messages in Fidonet.
+
+  This document specifies a simple kludge-based method of declaring
+  an avatar to represent the message's author.
 
 3. Key words to indicate requirement levels
 -+-----------------------------------------
@@ -40,6 +44,36 @@ Contents:
   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
   and "OPTIONAL" in this document are to be interpreted as described
   in FTA-1006 (based on RFC 2119).
+
+4. Kludges
+-+--------
+
+  Kludges (also known as klugde lines or control paragraphs) are
+  special lines embedded in the text body of a Fidonet message.
+  Sometimes kludges are used to support some new addressing and other
+  control information, sometimes they contain pieces of auxiliary
+  information about the message's author (location, ICQ UIN,
+  Jabber ID, real name, current music, mood, etc.) See technical
+  details in FTS-4000.
+
+  Kludges defined in the following sections are REQUIRED to have
+  the following four common characteristics:
+
+  1) Such kludge MUST NOT be preceded (immediately or otherwise)
+     by any of the common (i.e. non-kludge) lines of the message.
+     In other words, a set of kludges precedes the rest of the
+     message's body, and an echoprocessor (a tosser) MAY collect
+     and store these kludges separately, for example, in subfields
+     of a JAM message header, in a Squish message control block
+     (see FSP-1037), etc.
+
+  2) Each kludge line MUST start with a single SOH character (Ctrl+A,
+     ASCII 1).
+
+  3) That SOH character MUST immediately be followed by the kludge's
+     name and a colon and a RECOMMENDED OPTIONAL whitespace character.
+
+  4) The rest of the line contains that kludge's value.
 
 **********************************************************************
 EOTD                                               END OF THE DOCUMENT
