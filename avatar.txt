@@ -5,7 +5,7 @@ Status:         draft
 Revision:       WIP (a work in progress)
 Title:          Fidonet avatars
 Author:         Mithgol the Webmaster (aka Sergey Sokoloff, 2:5063/88)
-Revision Date:  17 Apr 2014
+Revision Date:  19 Apr 2014
 -+--------------------------------------------------------------------
 Contents:
    1. Status of this document
@@ -74,6 +74,70 @@ Contents:
      name and a colon and a RECOMMENDED OPTIONAL whitespace character.
 
   4) The rest of the line contains that kludge's value.
+
+5. The AVATAR kludge
+-+------------------
+
+  The name of this kludge is "AVATAR" (without quotes).
+
+  The value of this kludge is the URL of the avatar designated
+  for the message where the kludge appears.
+
+  That URL, however, MAY be preceded by one or more (space-separated)
+  OPTIONAL hints.
+
+  If such hint is a natural number, it SHOULD be interpreted as the
+  size (in bytes) of the avatar's file. The number MAY immediately be
+  followed by a metric postfix; for example, "k" (without quotes)
+  means kilobytes (1k = 1024 bytes), "M" (without quotes) means
+  megabytes (1M = 1024k), "G" (without quotes) means gigabytes (1G =
+  1024M). That makes a hint shorter and easier to fit in the kludge.
+
+  If such hint is a pair of natural numbers separated by "x" or "X"
+  character (without quotes), these numbers SHOULD be interpreted as
+  the width and the height (in pixels) of the avatar. For example,
+  300x50 avatar is 300 pixels wide, 50 pixels high.
+
+  (Fidonet browsers MAY resize avatars; however, they MAY use hints
+  to choose an avatar of the necessary size when several avatar URLs
+  are available, as explained below.)
+
+  Several AVATAR kludges MAY appear in the same message. They MUST
+  contain different URLs of essentially the same avatar image (though
+  the image MAY be resized and/or cropped for different width and
+  height) and thus a Fidonet browser MUST be able to choose any of
+  the given URLs without getting a different avatar.
+
+  In other words, the browser's choice of an avatar's source URL can
+  be based on the browser's support of URL schemes, on availability
+  of the resources designated by URLs (Internet servers or services,
+  Fidonet systems, Fidonet echomail or file areas), on given hints,
+  etc. This standard permits any URL scheme to be given in the kludge,
+  for example,
+
+  *) "http:" or "https:" scheme for WWW-hosted avatars,
+
+  *) "ftp:" scheme for FTP-hosted avatars,
+
+  *) "magnet:" or "ed2k:" scheme for avatars
+     accessible via file exchange,
+
+  *) "freq:" scheme for avatars accessible via Fidonet file requests,
+
+  *) "faqserv:" scheme for avatars accessible in automated Fidonet
+     netmail replies sent by so called "FAQ servers",
+
+  *) "fecho:" scheme for avatars posted in Fidonet file echoes,
+
+  *) "area:" scheme for avatars posted in Fidonet echomail areas.
+     By the way, an avatar and a kludge-containing message MAY
+     reside in different echomail areas (for example, if there is
+     some special echomail area for posting UUE-encoded avatars).
+
+  Note 1: this list of examples is not an exhaustive list.
+
+  Note 2: the latter four schemes (area, fecho, faqserv, freq) are
+  defined in the FGHI URL standard.
 
 **********************************************************************
 EOTD                                               END OF THE DOCUMENT
