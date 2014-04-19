@@ -105,6 +105,11 @@ Contents:
   to choose an avatar of the necessary size when several avatar URLs
   are available, as explained below.)
 
+  If several different hints of the same type are given (for example,
+  "400x55 256x256" or "14k 8M"), these hints MUST be ignored. Even if
+  several equal hints of the same type are given (for example, "400x55
+  400x55" or "14k 14k"), these hints SHOULD be ignored.
+
   Several AVATAR kludges MAY appear in the same message. They MUST
   contain different URLs of essentially the same avatar image (though
   the image MAY be resized and/or cropped for different width and
