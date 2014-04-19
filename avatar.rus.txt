@@ -158,7 +158,9 @@ FGHI                                FIDONET GLOBAL HYPERTEXT INTERFACE
   Примечание 1: этот список примеров не является исчерпывающим.
 
   Примечание 2: последние четыре схемы (area, fecho, faqserv, freq)
-  определены в стандарте FGHI URL.
+  определены в стандарте FGHI URL. Доступен здесь:
+
+  https://github.com/Mithgol/FGHI-URL/blob/master/FidoURL.rus.txt
 
 **********************************************************************
 EOTD                                               END OF THE DOCUMENT

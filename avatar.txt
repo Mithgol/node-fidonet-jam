@@ -140,7 +140,9 @@ Contents:
   Note 1: this list of examples is not an exhaustive list.
 
   Note 2: the latter four schemes (area, fecho, faqserv, freq) are
-  defined in the FGHI URL standard.
+  defined in the FGHI URL standard. Available here:
+
+  https://github.com/Mithgol/FGHI-URL/blob/master/FidoURL.txt
 
 **********************************************************************
 EOTD                                               END OF THE DOCUMENT
