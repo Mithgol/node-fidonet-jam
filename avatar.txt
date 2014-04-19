@@ -78,7 +78,8 @@ Contents:
 5. The AVATAR kludge
 -+------------------
 
-  The name of this kludge is "AVATAR" (without quotes).
+  The name of this kludge is "AVATAR" (case-insensitive,
+  without quotes).
 
   The value of this kludge is the URL of the avatar designated
   for the message where the kludge appears.
