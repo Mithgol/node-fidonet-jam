@@ -11,6 +11,8 @@ Contents:
    1. Status of this document
    2. Introduction
    3. Key words to indicate requirement levels
+   4. Kludges
+   5. The AVATAR kludge
 -+--------------------------------------------------------------------
 
 1. Status of this document
