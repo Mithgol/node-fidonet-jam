@@ -5,7 +5,7 @@ Status:         draft
 Revision:       WIP (a work in progress)
 Title:          Fidonet avatars
 Author:         Mithgol the Webmaster (aka Sergey Sokoloff, 2:5063/88)
-Revision Date:  19 Apr 2014
+Revision Date:  21 Apr 2014
 -+--------------------------------------------------------------------
 Contents:
    1. Status of this document
@@ -13,6 +13,7 @@ Contents:
    3. Key words to indicate requirement levels
    4. Kludges
    5. The AVATAR kludge
+   6. The GIF kludge
 -+--------------------------------------------------------------------
 
 1. Status of this document
@@ -148,6 +149,34 @@ Contents:
   defined in the FGHI URL standard. Available here:
 
   https://github.com/Mithgol/FGHI-URL/blob/master/FidoURL.txt
+
+6. The GIF kludge
+-+---------------
+
+  The name of this kludge is "GIF" (case-insensitive, without quotes).
+
+  The value of this kludge is a name of the avatar's file. The name is
+  given without its extension, and that extension is always ".GIF"
+  (without quotes). The file is available via file request from the
+  message's author's system.
+
+  For example, if the message's author's address is 2:9999/88, then
+  the following two kludges are equivalent:
+
+      ^aGIF: SYSOP88
+
+      ^aAVATAR: freq://2:9999/88/SYSOP88.GIF
+
+  where "^a" represents the SOH character and "freq://" is
+  an URL scheme for file requests (defined in the FGHI URL standard).
+
+  This kludge is defined for this standard to be backwards-compatible
+  with the earlier versions of GoldED where this kludge was actually
+  supported.
+
+  When AVATAR and GIF kludges coexist in the same message, the browser
+  MAY choose between them as if the GIF kludge was an equivalent
+  AVATAR kludge.
 
 **********************************************************************
 EOTD                                               END OF THE DOCUMENT
