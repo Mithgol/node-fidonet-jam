@@ -5,7 +5,7 @@ Status:         draft
 Revision:       WIP (a work in progress)
 Title:          Fidonet avatars
 Author:         Mithgol the Webmaster (aka Sergey Sokoloff, 2:5063/88)
-Revision Date:  21 Apr 2014
+Revision Date:  22 Apr 2014
 -+--------------------------------------------------------------------
 Contents:
    1. Status of this document
@@ -14,6 +14,7 @@ Contents:
    4. Kludges
    5. The AVATAR kludge
    6. The GIF kludge
+   7. The GRAVATAR kludge
 -+--------------------------------------------------------------------
 
 1. Status of this document
@@ -177,6 +178,70 @@ Contents:
   When AVATAR and GIF kludges coexist in the same message, the browser
   MAY choose between them as if the GIF kludge was an equivalent
   AVATAR kludge.
+
+7. The GRAVATAR kludge
+-+--------------------
+
+  The name of this kludge is "GRAVATAR" (case-insensitive,
+  without quotes).
+
+  The value of this kludge is a 32-digit hexadecimal number. It is
+  the MD5 hash of a lowercase e-mail address. For example, if that
+  address is "SomeExample@example.org", then the number is the output
+  of the following PHP code:
+
+     echo md5( strtolower( "SomeExample@example.org" ) );
+
+  There MUST be no whitespace before and after such e-mail address
+  when it is given to the MD5 hash calculator.
+
+  To make use of this kludge, the message's author has to register his
+  e-mail address on http://gravatar.com/ and publish his avatar there.
+  The e-mail address (unlike the avatar) does not become public
+  because only the hash is published (as the kludge's value) in Fido.
+
+  Then a Fidonet browser can use the published hash to get the avatar
+  as explained at http://gravatar.com/site/implement/images/
+
+  For example, the following two kludges MAY be equivalent:
+
+     ^aGRAVATAR: somehash
+
+     ^aAVATAR: https://secure.gravatar.com/avatar/somehash?s=200&r=x
+
+  (where "^a" represents the SOH character and "somehash" represents
+  some actual 32-digit hexadecimal number).
+
+  The value of the "s" parameter in that URL SHOULD be varied to fetch
+  an avatar of the necessary size ("s=200" means 200x200 avatar,
+  "s=333" means 333x333 avatar, etc.). Examples:
+
+  *) a Fidonet browser MAY request 20x20 avatars to represent authors
+     in a list of subjects of messages and a 200x200 avatar
+     to represent an author in a larger (multi-line) heading
+     of an individual message;
+
+  *) some JavaScript of a WebBBS MAY use window.devicePixelRatio
+     as a multiplier to get larger avatars for mobile devices with
+     greater pixel density (such as Apple's Retina display).
+
+  The value of the "r" parameter SHOULD be used to specify one of the
+  following ratings to request images up to and including that rating:
+
+  r=g: suitable for display on all websites with any audience type;
+
+  r=pg: may contain rude gestures, provocatively dressed individuals,
+        the lesser swear words, or mild violence;
+
+  r=r: may contain such things as harsh profanity, intense violence,
+       nudity, or hard drug use;
+
+  r=x: may contain hardcore sexual imagery or extremely disturbing
+       violence.
+
+  When GRAVATAR and AVATAR and/or GIF kludges coexist in the same
+  message, the browser MAY choose between them as if the GRAVATAR
+  kludge was an equivalent AVATAR kludge.
 
 **********************************************************************
 EOTD                                               END OF THE DOCUMENT
