@@ -5,7 +5,7 @@ Status:         draft
 Revision:       WIP (a work in progress)
 Title:          Fidonet avatars
 Author:         Mithgol the Webmaster (aka Sergey Sokoloff, 2:5063/88)
-Revision Date:  22 Apr 2014
+Revision Date:  24 Apr 2014
 -+--------------------------------------------------------------------
 Contents:
    1. Status of this document
@@ -15,6 +15,7 @@ Contents:
    5. The AVATAR kludge
    6. The GIF kludge
    7. The GRAVATAR kludge
+   8. The AVAKEY kludge
 -+--------------------------------------------------------------------
 
 1. Status of this document
@@ -242,6 +243,16 @@ Contents:
   When GRAVATAR and AVATAR and/or GIF kludges coexist in the same
   message, the browser MAY choose between them as if the GRAVATAR
   kludge was an equivalent AVATAR kludge.
+
+8. The AVAKEY kludge
+-+------------------
+
+  The name of this kludge is "AVAKEY" (case-insensitive,
+  without quotes).
+
+  The value of this kludge is a list of keywords separated by
+  "|" characters (without quotes). These keywords MUST correspond
+  to the avatar designated for the message where the kludge appears.
 
 **********************************************************************
 EOTD                                               END OF THE DOCUMENT
