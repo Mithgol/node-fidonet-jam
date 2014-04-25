@@ -5,7 +5,7 @@ Status:         draft
 Revision:       WIP (a work in progress)
 Title:          Fidonet avatars
 Author:         Mithgol the Webmaster (aka Sergey Sokoloff, 2:5063/88)
-Revision Date:  24 Apr 2014
+Revision Date:  25 Apr 2014
 -+--------------------------------------------------------------------
 Contents:
    1. Status of this document
@@ -253,6 +253,54 @@ Contents:
   The value of this kludge is a list of keywords separated by
   "|" characters (without quotes). These keywords MUST correspond
   to the avatar designated for the message where the kludge appears.
+
+  These keywords are useful when all of the avatar's URLs point to
+  some resources that are not immediately available and thus
+  the avatar itself is not immediately available to display. Examples:
+
+  *) a file exchange URL when the file's sources (seeds) are offline;
+
+  *) an Internet URL when the reader's device is offline;
+
+  *) a file request URL when the destination node is offline.
+
+  In such situation the Fidonet browser MAY temporarily display some
+  other avatar recently used by the same author in the same echomail
+  area (or in netmail), provided that the other avatar was used with
+  the same keyword.
+
+  If only one AVAKEY kludge is present in the message, the keywords
+  SHOULD be used in the order of appearance. For example, the kludge
+
+      ^aAVAKEY: smiling|very happy|seaside|default
+
+  (where "^a" represents the SOH character) means that the most recent
+  of available avatars with the "smiling" keyword is used; if no such
+  avatars are available, then the most recent "very happy" avatar, and
+  so on.
+
+  If several AVAKEY kludges are present in the message, the keywords'
+  order SHOULD NOT be taken into account. For example, the kludges
+
+      ^aAVAKEY: smiling|very happy
+      ^aAVAKEY: seaside|default
+
+  (where "^a" represents the SOH character) mean that the most recent
+  avatar marked with at least one of the four keywords ("smiling",
+  "very happy", "seaside" and "default") is used.
+
+  If the AVAKEY kludge is not present in the message, than the keyword
+  "default" (without quotes) MUST be assumed for the avatar if one or
+  more of the other kludges (AVATAR, GIF, GRAVATAR) designate some
+  avatar's URL. It works both ways:
+
+  1) if the avatar for such message is not immediately available,
+     the Fidonet browser MAY temporarily display the most recent
+     of available avatars used with the keyword "default",
+
+  2) when the Fidonet browser looks for the avatars used with
+     the keyword "default", the browser MUST also find avatars
+     designated in the messages with missing AVAKEY kludges.
 
 **********************************************************************
 EOTD                                               END OF THE DOCUMENT
