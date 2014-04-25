@@ -8,7 +8,7 @@ This repository does also contain draft standards of **Fidonet avatars** for the
 
 * The `avatar.rus.txt` file is the Russian version of the draft. This version is provided in UTF-8 (for the diffs to look reasonably good on GitHub and other git tools) and thus should be converted to CP866 encoding (common in Russian Fidonet) before posting to Fidonet.
 
-The module is intended to become (eventually) a reference implementation of these drafts.
+The module is intended to become (eventually) a reference implementation of these standards.
 
 ## Installing Fidonet JAM
 
