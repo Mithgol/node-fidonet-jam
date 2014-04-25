@@ -2,13 +2,13 @@ The **Fidonet JAM** module is able to read headers and texts of Fidonet echom
 
 The module is written in JavaScript and requires [Node.js](http://nodejs.org/) (version 0.10 or newer) to run.
 
-This repository does also contain draft standards of Fidonet avatars for the Fidonet Global Hypertext Interface project.
+This repository does also contain draft standards of **Fidonet avatars** for the Fidonet Global Hypertext Interface project.
 
 * The `avatar.txt` file is the English version of the draft.
 
 * The `avatar.rus.txt` file is the Russian version of the draft. This version is provided in UTF-8 (for the diffs to look reasonably good on GitHub and other git tools) and thus should be converted to CP866 encoding (common in Russian Fidonet) before posting to Fidonet.
 
-The drafts are (currently) a work in progress. The module is intended to become (eventually) a reference implementation of these drafts.
+The module is intended to become (eventually) a reference implementation of these drafts.
 
 ## Installing Fidonet JAM
 
