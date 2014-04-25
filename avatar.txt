@@ -2,7 +2,7 @@
 FGHI                                FIDONET GLOBAL HYPERTEXT INTERFACE
 **********************************************************************
 Status:         draft
-Revision:       WIP (a work in progress)
+Revision:       initial complete draft
 Title:          Fidonet avatars
 Author:         Mithgol the Webmaster (aka Sergey Sokoloff, 2:5063/88)
 Revision Date:  25 Apr 2014
@@ -97,7 +97,8 @@ Contents:
   followed by a metric postfix; for example, "k" (without quotes)
   means kilobytes (1k = 1024 bytes), "M" (without quotes) means
   megabytes (1M = 1024k), "G" (without quotes) means gigabytes (1G =
-  1024M). That makes a hint shorter and easier to fit in the kludge.
+  1024M). That makes a hint shorter and easier to fit in the kludge
+  before the URL.
 
   If such hint is a pair of natural numbers separated by "x" or "X"
   character (without quotes), these numbers SHOULD be interpreted as
@@ -152,6 +153,9 @@ Contents:
 
   https://github.com/Mithgol/FGHI-URL/blob/master/FidoURL.txt
 
+  Note 3: if some Fidonet browser does not support an URL's scheme,
+  it MAY ignore the AVATAR kludge with that URL.
+
 6. The GIF kludge
 -+---------------
 
@@ -159,8 +163,8 @@ Contents:
 
   The value of this kludge is a name of the avatar's file. The name is
   given without its extension, and that extension is always ".GIF"
-  (without quotes). The file is available via file request from the
-  message's author's system.
+  (without quotes). It is implied that the file is available via
+  file request from the message's author's system.
 
   For example, if the message's author's address is 2:9999/88, then
   the following two kludges are equivalent:
