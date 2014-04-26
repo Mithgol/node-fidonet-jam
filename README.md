@@ -4,9 +4,9 @@ The module is written in JavaScript and requires [Node.js](http://nodejs.org/
 
 This repository does also contain draft standards of **Fidonet avatars** for the Fidonet Global Hypertext Interface project.
 
-* The `avatar.txt` file is the English version of the draft.
+* The [`avatar.txt`](avatar.txt) file is the English version of the draft.
 
-* The `avatar.rus.txt` file is the Russian version of the draft. This version is provided in UTF-8 (for the diffs to look reasonably good on GitHub and other git tools) and thus should be converted to CP866 encoding (common in Russian Fidonet) before posting to Fidonet.
+* The [`avatar.rus.txt`](avatar.rus.txt) file is the Russian version of the draft. This version is provided in UTF-8 (for the diffs to look reasonably good on GitHub and other git tools) and thus should be converted to CP866 encoding (common in Russian Fidonet) before posting to Fidonet.
 
 The module is intended to become (eventually) a reference implementation of these standards.
 
