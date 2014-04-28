@@ -397,7 +397,8 @@ JAM.prototype.encodingFromHeader = function(header){
 };
 
 var decodeDefaults = {
-   // for decodeHeader, decodeMessage, numbersForMSGID, headersForMSGID
+   // for decodeHeader, decodeMessage, numbersForMSGID, headersForMSGID,
+   //     getAvatarsForHeader
    defaultEncoding: 'cp866',
    useDefaultIfUnknown: true
 };
@@ -743,6 +744,78 @@ JAM.prototype.getChildrenNumbers = function(number, callback){//err, numbers
 
       tryNextNumber( childNumber1 );
    });
+};
+
+JAM.prototype.getAvatarsForHeader = function(header, schemes, avatarOptions){
+   var gravatarDefaults = {
+      size: 200,
+      rating: 'x',
+      gravatarDefault: 'mm'
+   };
+   var defaults = extend(decodeDefaults, gravatarDefaults);
+   var options  = extend(defaults, avatarOptions);
+
+   schemes = schemes.map(function(scheme){
+      return scheme.toLowerCase();
+   });
+   var findHTTPS = schemes.indexOf('https') > -1;
+   var findHTTP  = schemes.indexOf('http')  > -1;
+   var findFREQ  = schemes.indexOf('freq')  > -1;
+
+   var _JAM = this;
+   var decoded = _JAM.decodeHeader( header, options );
+   var avatars = decoded.kludges.map(function(kludge){
+      var matches;
+      var regex;
+      var avatarURL;
+
+      regex = /^[Aa][Vv][Aa][Tt][Aa][Rr]:(?:.*\s)?((\S+?):\S+)\s*$/;
+      matches = regex.exec(kludge);
+      if( matches !== null ){
+         avatarURL = matches[1];
+         var avatarScheme = matches[2];
+         if( schemes.indexOf(avatarScheme) > -1 ){
+            return avatarURL;
+         } else {
+            return null;
+         }
+      }
+
+      if( findHTTP || findHTTPS ){
+         regex = /^[Gg][Rr][Aa][Vv][Aa][Tt][Aa][Rr]:\s*([01-9A-Fa-f]+)\s*$/;
+         matches = regex.exec(kludge);
+         if( matches !== null ){
+            var gravatarHash = matches[1];
+            if( findHTTPS ){ // secure:
+               avatarURL = 'https://secure.gravatar.com/avatar/';
+            } else { // insecure:
+               avatarURL = 'http://www.gravatar.com/avatar/';
+            }
+            avatarURL += gravatarHash;
+            avatarURL += '?s=' + options.size;
+            avatarURL += '&r=' + options.rating;
+            avatarURL += '&d=' + options.gravatarDefault;
+            return avatarURL;
+         }
+      }
+
+      if( findFREQ && ( options.origAddr || decoded.origAddr ) ){
+         regex = /^[Gg][Ii][Ff]:\s*(\S+)\s*$/;
+         matches = regex.exec(kludge);
+         if( matches !== null ){
+            var filenameGIF = matches[1];
+            avatarURL = 'freq://' + ( options.origAddr || decoded.origAddr );
+            avatarURL += '/' + filenameGIF + '.GIF';
+            return avatarURL;
+         }
+      }
+
+      return null;
+   }).filter(function(avatarURL){
+      return avatarURL !== null;
+   });
+
+   return avatars;
 };
 
 JAM.prototype.errors = {
