@@ -340,7 +340,7 @@ An optional `avatarOptions` parameter is an object with the following optional
 
 * `size` (**by default,** `200`) is an avatar size (in pixels) to be requested from the Gravatar service, if a gravatar is encountered. The default value (`200`) implies 200×200 avatar.
 
-* `rating` (**by default,** `'x'`) is an avatar rating to be given to the Gravatar service, if a gravatar is encountered. The service is expected to return an avatar of the given rating or one of its previous ratings according to the following list:
+* `rating` (**by default,** `'x'`) is an avatar rating to be given to the Gravatar service, if a gravatar is encountered. The service is expected to return an avatar up to and including that rating according to the following list:
    * `'g'` — suitable for display on all websites with any audience type;
    * `'pg'` — may contain rude gestures, provocatively dressed individuals, the lesser swear words, or mild violence;
    * `'r'` — may contain such things as harsh profanity, intense violence, nudity, or hard drug use;
