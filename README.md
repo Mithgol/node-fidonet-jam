@@ -326,6 +326,30 @@ useDefaultIfUnknown: true
 
 Before `messageText` is given to the callback, all occurences of the Fidonet line ending (`CR`, `'\r'`) are replaced by the Unix line ending (`LF`, `'\n'`).
 
+### getAvatarsForHeader(header, schemes, avatarOptions)
+
+Using the given `header`, returns an array of URLs of avatars designated for the corresponding message.
+
+This is accomplished by calling `.decodeHeader` and then scanning the kludges according to the above mentioned [standard](avatar.txt) of **Fidonet avatars** for the Fidonet Global Hypertext Interface project.
+
+The parameter `schemes` must contain the array of supported URL schemes (for example, `['http', 'https']` if only Web-hosted avatars are supported), case-insensitive. Only the supported avatar URLs are returned from the method.
+
+An optional `avatarOptions` parameter is an object with the following optional properties:
+
+* `defaultEncoding` (**by default,** `'cp866'`) and `useDefaultIfUnknown` (**by default,** `true`) are the options given to `.decodeHeader`.
+
+* `size` (**by default,** `200`) is an avatar size (in pixels) to be requested from the Gravatar service, if a gravatar is encountered. The default value (`200`) implies 200×200 avatar.
+
+* `rating` (**by default,** `'x'`) is an avatar rating to be given to the Gravatar service, if a gravatar is encountered. The service is expected to return an avatar of the given rating or one of its previous ratings according to the following list:
+   * `'g'` — suitable for display on all websites with any audience type;
+   * `'pg'` — may contain rude gestures, provocatively dressed individuals, the lesser swear words, or mild violence;
+   * `'r'` — may contain such things as harsh profanity, intense violence, nudity, or hard drug use;
+   * `'x'` — may contain hardcore sexual imagery or extremely disturbing violence.
+
+* `gravatarDefault` (**by default,** `'mm'`) is a keyword of an avatar to be returned by the Gravatar service, if an unknown gravatar is encountered. (See http://gravatar.com/site/implement/images/ for details.)
+
+* `origAddr` is a string to be used as the message's sender's address if a `freq://...` URL is created from a `GIF` kludge. If this option is missing, the `origAddr` property of the object returned from `.decodeHeader` is used. (If both are missing, that `GIF` kludge is ignored.)
+
 ### numbersForMSGID(MSGID, options, callback)
 
 Using the given `MSGID` string (or an array of MSGID strings), generates an array containing numbers of messages identified by any of the given MSGIDs, calling `.readAllHeaders` in the process. Then `callback(error, numbers)` is called.
@@ -350,30 +374,6 @@ defaultEncoding: 'cp866',
 useDefaultIfUnknown: true
 }
 ```
-
-### getAvatarsForHeader(header, schemes, avatarOptions)
-
-Using the given `header`, returns an array of URLs of avatars designated for the corresponding message.
-
-This is accomplished by calling `.decodeHeader` and then scanning the kludges according to the above mentioned [standard](avatar.txt) of **Fidonet avatars** for the Fidonet Global Hypertext Interface project.
-
-The parameter `schemes` must contain the array of supported URL schemes (for example, `['http', 'https']` if only Web-hosted avatars are supported), case-insensitive. Only the supported avatar URLs are returned from the method.
-
-An optional `avatarOptions` parameter is an object with the following optional properties:
-
-* `defaultEncoding` (**by default,** `'cp866'`) and `useDefaultIfUnknown` (**by default,** `true`) are the options given to `.decodeHeader`.
-
-* `size` (**by default,** `200`) is an avatar size (in pixels) to be requested from the Gravatar service, if a gravatar is encountered. The default value (`200`) implies 200×200 avatar.
-
-* `rating` (**by default,** `'x'`) is an avatar rating to be given to the Gravatar service, if a gravatar is encountered. The service is expected to return an avatar of the given rating or one of its previous ratings according to the following list:
-   * `'g'` — suitable for display on all websites with any audience type;
-   * `'pg'` — may contain rude gestures, provocatively dressed individuals, the lesser swear words, or mild violence;
-   * `'r'` — may contain such things as harsh profanity, intense violence, nudity, or hard drug use;
-   * `'x'` — may contain hardcore sexual imagery or extremely disturbing violence.
-
-* `gravatarDefault` (**by default,** `'mm'`) is a keyword of an avatar to be returned by the Gravatar service, if an unknown gravatar is encountered. (See http://gravatar.com/site/implement/images/ for details.)
-
-* `origAddr` is a string to be used as the message's sender's address if a `freq://...` URL is created from a `GIF` kludge. If this option is missing, the `origAddr` property of the object returned from `.decodeHeader` is used. (If both are missing, that `GIF` kludge is ignored.)
 
 ### headersForMSGID(MSGID, options, callback)
 
