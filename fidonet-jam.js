@@ -747,6 +747,8 @@ JAM.prototype.getChildrenNumbers = function(number, callback){//err, numbers
 };
 
 JAM.prototype.getAvatarsForHeader = function(header, schemes, avatarOptions){
+   var _JAM = this;
+
    var gravatarDefaults = {
       size: 200,
       rating: 'x',
@@ -762,9 +764,12 @@ JAM.prototype.getAvatarsForHeader = function(header, schemes, avatarOptions){
    var findHTTP  = schemes.indexOf('http')  > -1;
    var findFREQ  = schemes.indexOf('freq')  > -1;
 
-   var _JAM = this;
+   var regularAvatars = [];
+   var gravatars = [];
+   var avatarsGIF = [];
+
    var decoded = _JAM.decodeHeader( header, options );
-   var avatars = decoded.kludges.map(function(kludge){
+   decoded.kludges.forEach(function(kludge){
       var matches;
       var regex;
       var avatarURL;
@@ -775,10 +780,9 @@ JAM.prototype.getAvatarsForHeader = function(header, schemes, avatarOptions){
          avatarURL = matches[1];
          var avatarScheme = matches[2];
          if( schemes.indexOf(avatarScheme) > -1 ){
-            return avatarURL;
-         } else {
-            return null;
+            regularAvatars.push(avatarURL);
          }
+         return;
       }
 
       if( findHTTP || findHTTPS ){
@@ -795,7 +799,8 @@ JAM.prototype.getAvatarsForHeader = function(header, schemes, avatarOptions){
             avatarURL += '?s=' + options.size;
             avatarURL += '&r=' + options.rating;
             avatarURL += '&d=' + options.gravatarDefault;
-            return avatarURL;
+            gravatars.push(avatarURL);
+            return;
          }
       }
 
@@ -806,16 +811,15 @@ JAM.prototype.getAvatarsForHeader = function(header, schemes, avatarOptions){
             var filenameGIF = matches[1];
             avatarURL = 'freq://' + ( options.origAddr || decoded.origAddr );
             avatarURL += '/' + filenameGIF + '.GIF';
-            return avatarURL;
+            avatarsGIF.push(avatarURL);
+            return;
          }
       }
-
-      return null;
-   }).filter(function(avatarURL){
-      return avatarURL !== null;
    });
 
-   return avatars;
+   if( gravatars.length  > 1 ) gravatars  = [];
+   if( avatarsGIF.length > 1 ) avatarsGIF = [];
+   return [].concat( regularAvatars, gravatars, avatarsGIF );
 };
 
 JAM.prototype.errors = {

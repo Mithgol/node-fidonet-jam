@@ -5,7 +5,7 @@ Status:         draft
 Revision:       initial complete draft
 Title:          Fidonet avatars
 Author:         Mithgol the Webmaster (aka Sergey Sokoloff, 2:5063/88)
-Revision Date:  25 Apr 2014
+Revision Date:  02 May 2014
 -+--------------------------------------------------------------------
 Contents:
    1. Status of this document
@@ -180,6 +180,11 @@ Contents:
   with the earlier versions of GoldED where this kludge was actually
   supported.
 
+  If several GIF kludges with different values coexist in the same
+  message, these kludges MUST be ignored. Even if several GIF kludges
+  of equal values coexist in the same message, these kludges SHOULD be
+  ignored.
+
   When AVATAR and GIF kludges coexist in the same message, the browser
   MAY choose between them as if the GIF kludge was an equivalent
   AVATAR kludge.
@@ -243,6 +248,11 @@ Contents:
 
   r=x: may contain hardcore sexual imagery or extremely disturbing
        violence.
+
+  If several GRAVATAR kludges with different values coexist
+  in the same message, these kludges MUST be ignored. Even if several
+  GRAVATAR kludges of equal values coexist in the same message,
+  these kludges SHOULD be ignored.
 
   When GRAVATAR and AVATAR and/or GIF kludges coexist in the same
   message, the browser MAY choose between them as if the GRAVATAR
