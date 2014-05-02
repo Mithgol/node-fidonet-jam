@@ -419,7 +419,7 @@ Then `callback(error, origAddr)` is called. (When all of the above three source
 
 The optional `decodeOptions` parameter controls decoding (it is passed to `.decodeHeader` and `.decodeMessage` verbatim).
 
-This method is only necessary when the `.origAddr` property is unreliable by itself, i.e. when the echomail processor (such as `hpt/w32-mvcdll 1.4.0-sta 25-02-07` for example) sometimes does not fill `OADDRESS` subfield in the header.
+This method is only necessary when the `.origAddr` property is unreliable by itself, i.e. when the echomail processor (such as `hpt/w32-mvcdll 1.4.0-sta 25-02-07` for example) sometimes does not fill `OADDRESS` subfield in the header. Numerous Fidonet applications are forced to work around this issue ([example](https://github.com/ftnapps/smapinntpd/blob/5f4d7de9041a3f027aa6b619837a651c80e6f868/docs/smapinntpd.txt#L67-71)) until better echomail processors are widespread.
 
 This method treats a message's origin line as a source less reliable than that message's MSGID. That's because an error in quoting may cause an error in echomail processing where the quoted origin would replace the original origin. (See the FAQ of SU.FidoTech for details.)
 
