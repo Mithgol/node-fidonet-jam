@@ -398,7 +398,7 @@ JAM.prototype.encodingFromHeader = function(header){
 
 var decodeDefaults = {
    // for decodeHeader, decodeMessage, numbersForMSGID, headersForMSGID,
-   //     getAvatarsForHeader
+   //     getAvatarsForHeader, getOrigAddr
    defaultEncoding: 'cp866',
    useDefaultIfUnknown: true
 };
@@ -820,6 +820,47 @@ JAM.prototype.getAvatarsForHeader = function(header, schemes, avatarOptions){
    if( gravatars.length  > 1 ) gravatars  = [];
    if( avatarsGIF.length > 1 ) avatarsGIF = [];
    return [].concat( regularAvatars, gravatars, avatarsGIF );
+};
+
+JAM.prototype.getOrigAddr = function(
+   header, decodeOptions, callback // err, origAddr
+){
+   if(typeof callback === 'undefined' && typeof decodeOptions === 'function'){
+      callback = decodeOptions;
+      decodeOptions = void 0;
+   }
+   var options = extend(decodeDefaults, decodeOptions);
+
+   var _JAM = this;
+
+   var decoded = _JAM.decodeHeader( header, options );
+   if( typeof decoded.origAddr !== 'undefined' ){
+      setImmediate(function(){
+         callback(null, decoded.origAddr);
+      });
+      return;
+   }
+
+   var reMSGID = /^([0-9]+:[0-9]+\/[0-9]+(?:\.[0-9]+)?(?:@[A-Za-z0-9]+)?)\s+/;
+   var matchesMSGID = reMSGID.exec( decoded.msgid );
+   if( matchesMSGID !== null ){
+      setImmediate(function(){
+         callback(null, matchesMSGID[1]);
+      });
+      return;
+   }
+
+   _JAM.decodeMessage(header, options, function(err, messageText){
+      if( err ) return callback(err);
+
+      var reOrigin =
+      /(?:\(|\s+)([0-9]+:[0-9]+\/[0-9]+(?:\.[0-9]+)?(?:@[A-Za-z0-9]+)?)\)\s*$/
+      ;
+      var matchesOrigin = reOrigin.exec( messageText );
+      if( matchesOrigin !== null ) return callback(null, matchesOrigin[1]);
+
+      return callback(null, null);
+   });
 };
 
 JAM.prototype.errors = {
