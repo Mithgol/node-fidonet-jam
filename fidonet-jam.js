@@ -841,21 +841,23 @@ JAM.prototype.getOrigAddr = function(
       return;
    }
 
-   var reMSGID = /^([0-9]+:[0-9]+\/[0-9]+(?:\.[0-9]+)?(?:@[A-Za-z0-9]+)?)\s+/;
-   var matchesMSGID = reMSGID.exec( decoded.msgid );
-   if( matchesMSGID !== null ){
-      setImmediate(function(){
-         callback(null, matchesMSGID[1]);
-      });
-      return;
+   if( typeof decoded.msgid !== 'undefined' ){
+      var reMSGID =
+         /^([0-9]+:[0-9]+\/[0-9]+(?:\.[0-9]+)?(?:@[A-Za-z0-9]+)?)\s+/;
+      var matchesMSGID = reMSGID.exec( decoded.msgid );
+      if( matchesMSGID !== null ){
+         setImmediate(function(){
+            callback(null, matchesMSGID[1]);
+         });
+         return;
+      }
    }
 
    _JAM.decodeMessage(header, options, function(err, messageText){
+      /* jshint maxlen: false */
       if( err ) return callback(err);
 
-      var reOrigin =
-      /(?:\(|\s+)([0-9]+:[0-9]+\/[0-9]+(?:\.[0-9]+)?(?:@[A-Za-z0-9]+)?)\)\s*$/
-      ;
+      var reOrigin = /\n \* Origin: [^\n]*[ \(]([0-9]+:[0-9]+\/[0-9]+(?:\.[0-9]+)?(?:@[A-Za-z0-9]+)?)\)\s*$/;
       var matchesOrigin = reOrigin.exec( messageText );
       if( matchesOrigin !== null ) return callback(null, matchesOrigin[1]);
 
