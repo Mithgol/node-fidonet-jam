@@ -147,21 +147,40 @@ describe('Fidonet JAM', function(){
       });
    });
    it('MessageNum0 + basemsgnum === MessageNumber everywhere', function(done){
-      blog.readJDX(function(err){
+      blog.readAllHeaders(function(err, messageHeaders){
          if (err) throw err;
 
-         blog.readAllHeaders(function(err, messageHeaders){
-            if (err) throw err;
-
-            messageHeaders.forEach(function(currentHeader, headerIDX){
-               assert.strictEqual(
-                  blog.indexStructure[headerIDX].MessageNum0 +
-                  blog.fixedHeader.basemsgnum,
-                  currentHeader.MessageNumber
-               );
-            });
-            done();
+         messageHeaders.forEach(function(currentHeader, headerIDX){
+            assert.strictEqual(
+               blog.indexStructure[headerIDX].MessageNum0 +
+               blog.fixedHeader.basemsgnum,
+               currentHeader.MessageNumber
+            );
          });
+         done();
+      });
+   });
+   it('original addresses are available everywhere', function(done){
+      blog.readAllHeaders(function(err, messageHeaders){
+         if (err) throw err;
+
+         var headerIDX = 0;
+         var headerNextStep = function(){
+            var currentHeader = messageHeaders[headerIDX];
+            blog.getOrigAddr(currentHeader, function(err, origAddr){
+               if (err) throw err;
+
+               assert.notStrictEqual(origAddr, null);
+
+               headerIDX++;
+               if( headerIDX >= blog.size() ){
+                  done();
+               } else {
+                  headerNextStep();
+               }
+            });
+         };
+         headerNextStep();
       });
    });
    it('the cache is cleared, then a MSGID search is correct', function(done){

@@ -230,7 +230,7 @@ Here's a header's screenshot for example:
 
 ### readAllHeaders(callback)
 
-Asynchronously reads all JAM headers from the base (calling `.readJDX`, `.readFixedHeaderInfoStruct` and `.readHeader` methods in the process; therefore `.JHR` and `.fixedHeader` properties of the object are populated, though the latter is not used anywhere in the method).
+Asynchronously reads all JAM headers from the base (calling `.readJDX`, `.readFixedHeaderInfoStruct` and `.readHeader` methods in the process; therefore `.indexStructure` and `.JHR` and `.fixedHeader` properties of the object are populated, though the latter is not used anywhere in the method).
 
 Then calls `callback(error, messageHeaders)`, where `messageHeaders` is an array containing JAM headers of the individual messages as returned by `.readHeader`.
 
