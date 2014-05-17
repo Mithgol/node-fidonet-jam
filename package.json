@@ -15,7 +15,7 @@
    "singlebyte": "~1.0.10"
 },
 "scripts": {
-   "pretest": "jshint fidonet-jam.js test/test.js",
+   "pretest": "jshint fidonet-jam.js test/",
    "test": "mocha --reporter spec --timeout 60s"
 }
 }
