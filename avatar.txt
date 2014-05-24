@@ -4,7 +4,7 @@ FGHI                                FIDONET GLOBAL HYPERTEXT INTERFACE
 Status:         draft
 Revision:       initial complete draft
 Title:          Fidonet avatars
-Author:         Mithgol the Webmaster (aka Sergey Sokoloff, 2:5063/88)
+Author:         Mithgol the Webmaster   (aka Sergey Sokoloff, 2:50/88)
 Revision Date:  02 May 2014
 -+--------------------------------------------------------------------
 Contents:

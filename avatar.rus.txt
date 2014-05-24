@@ -4,7 +4,7 @@ FGHI                                FIDONET GLOBAL HYPERTEXT INTERFACE
 Статус:         черновик
 Номер редакции: первоначальный оконченный черновик
 Заглавие:       Фидонетовские аватары
-Автор:          Mithgol the Webmaster (aka Sergey Sokoloff, 2:5063/88)
+Автор:          Mithgol the Webmaster   (aka Sergey Sokoloff, 2:50/88)
 Дата редакции:  02 May 2014
 -+--------------------------------------------------------------------
 Содержание:
