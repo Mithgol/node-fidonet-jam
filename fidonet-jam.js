@@ -1,5 +1,5 @@
 var fs = require('fs');
-var extend = require('util')._extend;
+var extend = require('extend');
 var moment = require('moment');
 var sb = require('singlebyte');
 var crc32 = require('buffer-crc32');
@@ -405,7 +405,7 @@ var decodeDefaults = {
 
 JAM.prototype.decodeHeader = function(header, decodeOptions){
    /* jshint indent: false */
-   var options = extend(decodeDefaults, decodeOptions);
+   var options = extend({}, decodeDefaults, decodeOptions);
 
    var encoding = this.encodingFromHeader(header);
    if( encoding === null ) encoding = options.defaultEncoding;
@@ -509,7 +509,7 @@ JAM.prototype.decodeMessage = function(header, decodeOptions, callback){
    }
    var _JAM = this;
 
-   var options = extend(decodeDefaults, decodeOptions);
+   var options = extend({}, decodeDefaults, decodeOptions);
 
    var encoding = _JAM.encodingFromHeader(header);
    if( encoding === null ) encoding = options.defaultEncoding;
@@ -570,7 +570,7 @@ JAM.prototype.numbersForMSGID = function(
       decodeOptions = void 0;
    }
    if( !Array.isArray(MSGID) ) MSGID = [ MSGID ];
-   var options = extend(decodeDefaults, decodeOptions);
+   var options = extend({}, decodeDefaults, decodeOptions);
 
    var _JAM = this;
    _JAM.readAllHeaders(function(err, messageHeaders){
@@ -614,7 +614,7 @@ JAM.prototype.headersForMSGID = function(
       decodeOptions = void 0;
    }
    if( !Array.isArray(MSGID) ) MSGID = [ MSGID ];
-   var options = extend(decodeDefaults, decodeOptions);
+   var options = extend({}, decodeDefaults, decodeOptions);
 
    var _JAM = this;
    _JAM.readAllHeaders(function(err, messageHeaders){
@@ -754,8 +754,7 @@ JAM.prototype.getAvatarsForHeader = function(header, schemes, avatarOptions){
       rating: 'x',
       gravatarDefault: 'mm'
    };
-   var defaults = extend(decodeDefaults, gravatarDefaults);
-   var options  = extend(defaults, avatarOptions);
+   var options = extend({}, decodeDefaults, gravatarDefaults, avatarOptions);
 
    schemes = schemes.map(function(scheme){
       return scheme.toLowerCase();
@@ -829,7 +828,7 @@ JAM.prototype.getOrigAddr = function(
       callback = decodeOptions;
       decodeOptions = void 0;
    }
-   var options = extend(decodeDefaults, decodeOptions);
+   var options = extend({}, decodeDefaults, decodeOptions);
 
    var _JAM = this;
 
