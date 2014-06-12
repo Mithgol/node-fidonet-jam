@@ -1,8 +1,10 @@
 var fs = require('fs');
 var extend = require('extend');
 var moment = require('moment');
-var sb = require('singlebyte');
 var crc32 = require('buffer-crc32');
+
+var il = require('iconv-lite');
+il.extendNodeEncodings();
 
 function getSubfieldTypeFromLoID(LoID){
    /* jshint indent: false */
@@ -55,11 +57,11 @@ JAM.prototype.crc32 = function(inString, options){
          return upperChar.toLowerCase();
       });
    }
-   if( !sb.isEncoding(options.encoding) ){
+   if( !Buffer.isEncoding(options.encoding) ){
       options.encoding = 'utf8';
    }
 
-   var inBuf = sb.strToBuf(inString, options.encoding);
+   var inBuf = Buffer(inString, options.encoding);
    // 4294967295 is the maximum 32-bit integer
    return 4294967295 - crc32.unsigned( inBuf );
 };
@@ -409,10 +411,10 @@ JAM.prototype.decodeHeader = function(header, decodeOptions){
 
    var encoding = this.encodingFromHeader(header);
    if( encoding === null ) encoding = options.defaultEncoding;
-   if( options.useDefaultIfUnknown && !sb.isEncoding(encoding) ){
+   if( options.useDefaultIfUnknown && !Buffer.isEncoding(encoding) ){
       encoding = options.defaultEncoding;
    }
-   if( !sb.isEncoding(encoding) ){
+   if( !Buffer.isEncoding(encoding) ){
       throw new Error(this.errors.UNKNOWN_ENCODING);
    }
 
@@ -426,44 +428,28 @@ JAM.prototype.decodeHeader = function(header, decodeOptions){
    for( var i = 0; i < header.Subfields.length; i++ ){
       switch( header.Subfields[i].LoID ){
          case 0: // OADDRESS
-            decoded.origAddr = sb.bufToStr(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.origAddr = header.Subfields[i].Buffer.toString(encoding);
          break;
          case 1: // DADDRESS
-            decoded.toAddr = sb.bufToStr(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.toAddr = header.Subfields[i].Buffer.toString(encoding);
          break;
          case 2: // SENDERNAME
-            decoded.from = sb.bufToStr(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.from = header.Subfields[i].Buffer.toString(encoding);
          break;
          case 3: // RECEIVERNAME
-            decoded.to = sb.bufToStr(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.to = header.Subfields[i].Buffer.toString(encoding);
          break;
          case 4: // MSGID
-            decoded.msgid = sb.bufToStr(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.msgid = header.Subfields[i].Buffer.toString(encoding);
          break;
          case 5: // REPLYID
-            decoded.replyid = sb.bufToStr(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.replyid = header.Subfields[i].Buffer.toString(encoding);
          break;
          case 6: // SUBJECT
-            decoded.subj = sb.bufToStr(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.subj = header.Subfields[i].Buffer.toString(encoding);
          break;
          case 7: // PID
-            decoded.pid = sb.bufToStr(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.pid = header.Subfields[i].Buffer.toString(encoding);
          break;
          /*
          case 8: return 'TRACE'; //break;
@@ -475,27 +461,21 @@ JAM.prototype.decodeHeader = function(header, decodeOptions){
          case 1000: return 'EMBINDAT'; //break;
          */
          case 2000: // FTSKLUDGE
-            decoded.kludges.push(sb.bufToStr(
-               header.Subfields[i].Buffer, encoding
-            ));
+            decoded.kludges.push(
+               header.Subfields[i].Buffer.toString(encoding)
+            );
          break;
          case 2001: // SEENBY2D
-            decoded.seenby = sb.bufToStr(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.seenby = header.Subfields[i].Buffer.toString(encoding);
          break;
          case 2002: // PATH2D
-            decoded.path = sb.bufToStr(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.path = header.Subfields[i].Buffer.toString(encoding);
          break;
          /*
          case 2003: return 'FLAGS'; //break;
          */
          case 2004: // TZUTCINFO
-            decoded.timezone = sb.bufToStr(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.timezone = header.Subfields[i].Buffer.toString(encoding);
          break;
       }
    }
@@ -513,18 +493,18 @@ JAM.prototype.decodeMessage = function(header, decodeOptions, callback){
 
    var encoding = _JAM.encodingFromHeader(header);
    if( encoding === null ) encoding = options.defaultEncoding;
-   if( options.useDefaultIfUnknown && !sb.isEncoding(encoding) ){
+   if( options.useDefaultIfUnknown && !Buffer.isEncoding(encoding) ){
       encoding = options.defaultEncoding;
    }
-   if( !sb.isEncoding(encoding) ){
+   if( !Buffer.isEncoding(encoding) ){
       return callback(new Error(this.errors.UNKNOWN_ENCODING));
    }
 
    _JAM.readJDT(function(err){
       if (err) return callback(err);
 
-      callback(null, sb.bufToStr(
-         _JAM.JDT, encoding, header.Offset, header.Offset + header.TxtLen
+      callback(null, _JAM.JDT.toString(
+         encoding, header.Offset, header.Offset + header.TxtLen
       ).replace(/\r/g, '\n'));
    });
 };
@@ -580,10 +560,12 @@ JAM.prototype.numbersForMSGID = function(
       var resultArray = messageHeaders.map(function(hdr, idx){
          var checkEncoding = _JAM.encodingFromHeader(hdr);
          if( checkEncoding === null ) checkEncoding = options.defaultEncoding;
-         if( options.useDefaultIfUnknown && !sb.isEncoding(checkEncoding) ){
+         if(
+            options.useDefaultIfUnknown && !Buffer.isEncoding(checkEncoding)
+         ){
             checkEncoding = options.defaultEncoding;
          }
-         if( !sb.isEncoding(checkEncoding) ){
+         if( !Buffer.isEncoding(checkEncoding) ){
             checkEncoding = decodeDefaults.defaultEncoding;
          }
 
@@ -624,10 +606,12 @@ JAM.prototype.headersForMSGID = function(
       var headersArray = messageHeaders.map(function(hdr, idx){
          var checkEncoding = _JAM.encodingFromHeader(hdr);
          if( checkEncoding === null ) checkEncoding = options.defaultEncoding;
-         if( options.useDefaultIfUnknown && !sb.isEncoding(checkEncoding) ){
+         if(
+            options.useDefaultIfUnknown && !Buffer.isEncoding(checkEncoding)
+         ){
             checkEncoding = options.defaultEncoding;
          }
-         if( !sb.isEncoding(checkEncoding) ){
+         if( !Buffer.isEncoding(checkEncoding) ){
             checkEncoding = decodeDefaults.defaultEncoding;
          }
 
