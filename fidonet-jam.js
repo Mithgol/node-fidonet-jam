@@ -3,8 +3,7 @@ var extend = require('extend');
 var moment = require('moment');
 var crc32 = require('buffer-crc32');
 
-var il = require('iconv-lite');
-il.extendNodeEncodings();
+require('iconv-lite').extendNodeEncodings();
 
 function getSubfieldTypeFromLoID(LoID){
    /* jshint indent: false */
