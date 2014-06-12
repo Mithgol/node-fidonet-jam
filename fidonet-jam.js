@@ -49,7 +49,7 @@ JAM.prototype.crc32 = function(inString, options){
       options = {keepCase: true};
    } else if( typeof options !== 'object' ){
       options = {};
-   }
+   } else options = extend({}, options);
 
    if( !options.keepCase ){
       inString = inString.replace(/[A-Z]/g, function(upperChar){
