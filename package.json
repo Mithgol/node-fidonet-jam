@@ -12,6 +12,7 @@
 "dependencies": {
    "buffer-crc32": "0.2.1",
    "extend": "~1.2.1",
+   "iconv-lite": "~0.4.1",
    "moment": "~2.3.0",
    "singlebyte": "~1.0.11"
 },
