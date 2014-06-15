@@ -399,7 +399,7 @@ JAM.prototype.encodingFromHeader = function(header){
 
 var decodeDefaults = {
    // for decodeHeader, decodeMessage, numbersForMSGID, headersForMSGID,
-   //     getAvatarsForHeader, getOrigAddr
+   //     getAvatarsForHeader, getOrigAddr, decodeKludges
    defaultEncoding: 'cp866',
    useDefaultIfUnknown: true
 };
@@ -479,6 +479,79 @@ JAM.prototype.decodeHeader = function(header, decodeOptions){
       }
    }
    return decoded;
+};
+
+JAM.prototype.decodeKludges = function(header, decodeOptions){
+   /* jshint indent: false */
+   var options = extend({}, decodeDefaults, decodeOptions);
+
+   var encoding = this.encodingFromHeader(header);
+   if( encoding === null ) encoding = options.defaultEncoding;
+   if( options.useDefaultIfUnknown && !Buffer.isEncoding(encoding) ){
+      encoding = options.defaultEncoding;
+   }
+   if( !Buffer.isEncoding(encoding) ){
+      throw new Error(this.errors.UNKNOWN_ENCODING);
+   }
+
+   var kludges = [];
+
+   for( var i = 0; i < header.Subfields.length; i++ ){
+      switch( header.Subfields[i].LoID ){
+         case 0: // OADDRESS
+         break;
+         case 1: // DADDRESS
+         break;
+         case 2: // SENDERNAME
+         break;
+         case 3: // RECEIVERNAME
+         break;
+         case 4: // MSGID
+            kludges.push(
+               'MSGID: ' + header.Subfields[i].Buffer.toString(encoding)
+            );
+         break;
+         case 5: // REPLYID
+            kludges.push(
+               'REPLY: ' + header.Subfields[i].Buffer.toString(encoding)
+            );
+         break;
+         case 6: // SUBJECT
+         break;
+         case 7: // PID
+            kludges.push(
+               'PID: ' + header.Subfields[i].Buffer.toString(encoding)
+            );
+         break;
+         /*
+         case 8: return 'TRACE'; //break;
+         case 9: return 'ENCLOSEDFILE'; //break;
+         case 10: return 'ENCLOSEDFILEWALIAS'; //break;
+         case 11: return 'ENCLOSEDFREQ'; //break;
+         case 12: return 'ENCLOSEDFILEWCARD'; //break;
+         case 13: return 'ENCLOSEDINDIRECTFILE'; //break;
+         case 1000: return 'EMBINDAT'; //break;
+         */
+         case 2000: // FTSKLUDGE
+            kludges.push(
+               header.Subfields[i].Buffer.toString(encoding)
+            );
+         break;
+         case 2001: // SEENBY2D
+         break;
+         case 2002: // PATH2D
+         break;
+         /*
+         case 2003: return 'FLAGS'; //break;
+         */
+         case 2004: // TZUTCINFO
+            kludges.push(
+               'TZUTC: ' + header.Subfields[i].Buffer.toString(encoding)
+            );
+         break;
+      }
+   }
+   return kludges.join('\n');
 };
 
 JAM.prototype.decodeMessage = function(header, decodeOptions, callback){
