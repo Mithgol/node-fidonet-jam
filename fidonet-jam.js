@@ -498,14 +498,6 @@ JAM.prototype.decodeKludges = function(header, decodeOptions){
 
    for( var i = 0; i < header.Subfields.length; i++ ){
       switch( header.Subfields[i].LoID ){
-         case 0: // OADDRESS
-         break;
-         case 1: // DADDRESS
-         break;
-         case 2: // SENDERNAME
-         break;
-         case 3: // RECEIVERNAME
-         break;
          case 4: // MSGID
             kludges.push(
                'MSGID: ' + header.Subfields[i].Buffer.toString(encoding)
@@ -516,34 +508,16 @@ JAM.prototype.decodeKludges = function(header, decodeOptions){
                'REPLY: ' + header.Subfields[i].Buffer.toString(encoding)
             );
          break;
-         case 6: // SUBJECT
-         break;
          case 7: // PID
             kludges.push(
                'PID: ' + header.Subfields[i].Buffer.toString(encoding)
             );
          break;
-         /*
-         case 8: return 'TRACE'; //break;
-         case 9: return 'ENCLOSEDFILE'; //break;
-         case 10: return 'ENCLOSEDFILEWALIAS'; //break;
-         case 11: return 'ENCLOSEDFREQ'; //break;
-         case 12: return 'ENCLOSEDFILEWCARD'; //break;
-         case 13: return 'ENCLOSEDINDIRECTFILE'; //break;
-         case 1000: return 'EMBINDAT'; //break;
-         */
          case 2000: // FTSKLUDGE
             kludges.push(
                header.Subfields[i].Buffer.toString(encoding)
             );
          break;
-         case 2001: // SEENBY2D
-         break;
-         case 2002: // PATH2D
-         break;
-         /*
-         case 2003: return 'FLAGS'; //break;
-         */
          case 2004: // TZUTCINFO
             kludges.push(
                'TZUTC: ' + header.Subfields[i].Buffer.toString(encoding)

@@ -262,7 +262,7 @@ Before the value is returned, the following replacements are made:
 
 ### decodeHeader(header, options)
 
-Uses the encoding (determined by `.encodingFromHeader(header)`) to decode strings from the Buffer properties of the header.
+Uses the encoding (determined by `.encodingFromHeader(header)`) to decode strings from the Buffer properties of the header's Subfields.
 
 * If `.encodingFromHeader` returns `null`, `options.defaultEncoding` is used.
 
@@ -306,6 +306,26 @@ The same returned object may also have one or more of the following properti
 * `seenby` — space-separated incomplete list of the nodes that seen the message. (The 2D addresses of that nodes are given.)
 
 * `timezone` — sender's time zone in `+HHmm` or `-HHmm` form (for example, `-0400`) where `+` may be omitted.
+
+### decodeKludges(header, options)
+
+Does a minor part of what `decodeHeader` does: decodes only the kludge lines.
+
+Uses the encoding (determined by `.encodingFromHeader(header)`) to decode strings from the Buffer properties of the header's Subfields. If `.encodingFromHeader` returns `null`, uses `options` or defaults the same way `decodeHeader` does it.
+
+The kludges are decoded only from the following Subfield types:
+
+* `4 / 'MSGID'` — The ID of the message.
+* `5 / 'REPLYID'` — If the message is a reply to some other message, contains the MSGID of that message.
+* `7 / 'PID'` — The PID of the program that generated the message.
+* `2004 / 'TZUTCINFO'` — Time zone information in `+HHmm` or `-HHmm` form (for example, `-0400`) where `+` may be omitted. (Becomes a `TZUTC` kludge.)
+* `2000 / 'FTSKLUDGE'` — other FTS-compliant “kludge” lines.
+
+The other subfields (including `PATH` and `SEEN-BY`) are ignored.
+
+The kludge lines are decoded without the preceding SOH (`Ctrl+A`, `0x01`) code.
+
+The returned value is a string containing all the kludge lines separated by the Unix line endings (`LF`, `'\n'`).
 
 ### decodeMessage(header, options, callback)
 
