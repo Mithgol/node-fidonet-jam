@@ -108,10 +108,13 @@ describe('Fidonet JAM', function(){
          );
          assert.equal( blog.encodingFromHeader(header), 'cp866' );
 
+         console.log('\nKludges of the '+headSampleth+' header:');
+         console.log( blog.decodeKludges(header) );
+
          blog.decodeMessage(header, function(err, messageText){
             if (err) throw err;
 
-            console.log('The '+headSampleth+' message (decoded):');
+            console.log('\nThe '+headSampleth+' message (decoded):');
             console.log(util.inspect(
                messageText, false, Infinity, true
             ));
