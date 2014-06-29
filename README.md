@@ -12,7 +12,7 @@ This module is a reference implementation of these standards, though incompl
 
 ## Installing Fidonet JAM
 
-[![(npm package version)](https://nodei.co/npm/fidonet-jam.png?downloads=true)](https://npmjs.org/package/fidonet-jam)
+[![(npm package version)](https://nodei.co/npm/fidonet-jam.png?downloads=true)](https://npmjs.org/package/fidonet-jam)  [![(a histogram of downloads)](https://nodei.co/npm-dl/fidonet-jam.png?months=3)](https://npmjs.org/package/fidonet-jam)
 
 * Latest packaged version: `npm install fidonet-jam`
 
