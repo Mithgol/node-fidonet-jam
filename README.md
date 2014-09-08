@@ -234,7 +234,7 @@ Asynchronously reads all JAM headers from the base (calling `.readJDX`, `.re
 
 Then calls `callback(error, messageHeaders)`, where `messageHeaders` is an array containing JAM headers of the individual messages as returned by `.readHeader`.
 
-**Note 1: ** as in any other JavaScript array, the indexes of `messageHeaders` are 0-based, while the `number` parameter of the `.readHeader` method and the `.MessageNumber` property of the header are 1-based.
+**Note 1: ** as in any other JavaScript array, the indexes of `messageHeaders` are 0-based, while the `number` parameter of the `.readHeader` method is 1-based (and the `.MessageNumber` property of the header starts from `.fixedHeader.basemsgnum`, which is either `1` or greater).
 
 **Note 2: ** scanning of the whole base takes some time. As tests show, almost a second (or several seconds on an older computer or older Node.js engine) is necessary to scan even a single echo base containing 9151 messages. To avoid freezing of the Node.js event loop, each `.readHeader` call is postponed with `setImmediate()`.
 
