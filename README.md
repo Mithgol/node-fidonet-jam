@@ -1,3 +1,5 @@
+[![(a histogram of downloads)](https://nodei.co/npm-dl/fidonet-jam.png?height=3)](https://npmjs.org/package/fidonet-jam)
+
 The **Fidonet JAM** module is able to read headers and texts of Fidonet echomail messages from JAM message bases according to [the Joaquim-Andrew-Mats Message Base Proposal.](JAM.txt)
 
 This module is written in JavaScript and requires [Node.js](http://nodejs.org/) to run. (Node.js version 0.10.x or 0.12.x is recommended. The latest stable [io.js](https://iojs.org/) is fine too.)
@@ -12,7 +14,7 @@ This module is a reference implementation of these standards, though incompl
 
 ## Installing Fidonet JAM
 
-[![(npm package version)](https://nodei.co/npm/fidonet-jam.png?downloads=true)](https://npmjs.org/package/fidonet-jam)  [![(a histogram of downloads)](https://nodei.co/npm-dl/fidonet-jam.png?months=3)](https://npmjs.org/package/fidonet-jam)
+[![(npm package version)](https://nodei.co/npm/fidonet-jam.png?downloads=true)](https://npmjs.org/package/fidonet-jam)
 
 * Latest packaged version: `npm install fidonet-jam`
 
