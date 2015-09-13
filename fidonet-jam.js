@@ -5,6 +5,9 @@ var crc32 = require('buffer-crc32');
 
 require('iconv-lite').extendNodeEncodings();
 
+// work around https://github.com/nodejs/node/issues/2835
+var enc = require('iconv-lite').encode;
+
 function getSubfieldTypeFromLoID(LoID){
    /* jshint indent: false */
    switch( LoID ){
@@ -60,7 +63,9 @@ JAM.prototype.crc32 = function(inString, options){
       options.encoding = 'utf8';
    }
 
-   var inBuf = Buffer(inString, options.encoding);
+   // work around https://github.com/nodejs/node/issues/2835
+   // var inBuf = Buffer(inString, options.encoding);
+   var inBuf = enc(inString, options.encoding);
    // 4294967295 is the maximum 32-bit integer
    return 4294967295 - crc32.unsigned( inBuf );
 };

@@ -2,9 +2,7 @@
 
 The **Fidonet JAM** module is able to read headers and texts of Fidonet echomail messages from JAM message bases according to [the Joaquim-Andrew-Mats Message Base Proposal.](JAM.txt)
 
-This module is written in JavaScript and requires [Node.js](http://nodejs.org/) to run.
-* Node.js version 0.10.x or 0.12.x is recommended.
-* The latest stable [io.js](https://iojs.org/) or Node v4.0.x are not supported because they are [not backwards-compatible](https://github.com/nodejs/node/issues/2835) with older interfaces currently used by [`iconv-lite`](https://www.npmjs.com/package/iconv-lite).
+This module is written in JavaScript and requires [Node.js](http://nodejs.org/) to run. It is tested against Node.js v0.10.x, Node.js v0.12.x, Node.js v4.0.x and the latest stable version of io.js.
 
 This repository does also contain draft standards of **Fidonet avatars** for the Fidonet Global Hypertext Interface project.
 
