@@ -5,7 +5,7 @@ Status:         draft
 Revision:       initial complete draft
 Title:          Fidonet avatars
 Author:         Mithgol the Webmaster   (aka Sergey Sokoloff, 2:50/88)
-Revision Date:  02 May 2014
+Revision Date:  27 Feb 2016
 -+--------------------------------------------------------------------
 Contents:
    1. Status of this document
@@ -16,6 +16,7 @@ Contents:
    6. The GIF kludge
    7. The GRAVATAR kludge
    8. The AVAKEY kludge
+   Appendix A. Known implementations
 -+--------------------------------------------------------------------
 
 1. Status of this document
@@ -315,6 +316,22 @@ Contents:
   2) when the Fidonet browser looks for the avatars used with
      the keyword "default", the browser MUST also find avatars
      designated in the messages with missing AVAKEY kludges.
+
+Appendix A. Known implementations
+-+-------------------------------
+
+  By the time of this writing there are several implementation of the
+  draft editions of this standard.
+
+  Reference implementation (free open source):
+
+  https://github.com/Mithgol/node-fidonet-jam
+
+  Applications written by the standard's author:
+
+  *) PhiDo https://github.com/Mithgol/phido
+
+  *) twi2fido https://github.com/Mithgol/node-twi2fido/
 
 **********************************************************************
 EOTD                                               END OF THE DOCUMENT
