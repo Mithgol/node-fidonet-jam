@@ -5,7 +5,7 @@ Status:         draft
 Revision:       initial complete draft
 Title:          Fidonet avatars
 Author:         Mithgol the Webmaster   (aka Sergey Sokoloff, 2:50/88)
-Revision Date:  27 Feb 2016
+Revision Date:  05 Mar 2016
 -+--------------------------------------------------------------------
 Contents:
    1. Status of this document
@@ -332,6 +332,9 @@ Appendix A. Known implementations
   *) PhiDo https://github.com/Mithgol/phido
 
   *) twi2fido https://github.com/Mithgol/node-twi2fido/
+
+  These implementations do not implement the last section of this
+  standard (the AVAKEY kludge).
 
 **********************************************************************
 EOTD                                               END OF THE DOCUMENT
