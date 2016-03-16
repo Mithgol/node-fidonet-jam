@@ -1,7 +1,7 @@
 {
 "name": "fidonet-jam",
 "main": "fidonet-jam.js",
-"version": "3.8.13",
+"version": "3.8.14",
 "description": "Fidonet JAM message base parser",
 "keywords": ["Fidonet", "Fido", "JAM"],
 "author": { "name": "Mithgol the Webmaster" },
@@ -13,7 +13,7 @@
 "dependencies": {
    "buffer-crc32": "~0.2.5",
    "extend": "~3.0.0",
-   "iconv-lite": "0.4.11",
+   "iconv-lite": "~0.4.13",
    "moment": "~2.12.0"
 },
 "scripts": {
