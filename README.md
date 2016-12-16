@@ -457,7 +457,7 @@ That's because Fidonet software uses different locking methods. For example, Go
 
 The tests currently contain ≈14 megabytes of input data and thus are not included in the npm package of the module. Use the version from GitHub.
 
-It is necessary to install [Mocha](http://visionmedia.github.io/mocha/) and [JSHint](http://jshint.com/) for testing.
+It is necessary to install [Mocha](http://mochajs.org/) and [JSHint](http://jshint.com/) for testing.
 
 * You may install Mocha globally (`npm install mocha -g`) or locally (`npm install mocha` in the directory of the Fidonet JAM module).
 
