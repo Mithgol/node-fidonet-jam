@@ -5,7 +5,7 @@ Status:         draft
 Revision:       initial complete draft
 Title:          Fidonet avatars
 Author:         Mithgol the Webmaster   (aka Sergey Sokoloff, 2:50/88)
-Revision Date:  9 Jan 2017
+Revision Date:  10 Jan 2017
 -+--------------------------------------------------------------------
 Contents:
    1. Status of this document
@@ -328,6 +328,8 @@ Appendix A. Known implementations
   https://github.com/Mithgol/node-fidonet-jam
 
   Application-level implementations written by the standard's author:
+
+  *) Fido2RSS https://github.com/Mithgol/fido2rss
 
   *) fido2twi https://github.com/Mithgol/node-fido2twi
 

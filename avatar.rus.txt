@@ -5,7 +5,7 @@ FGHI                                FIDONET GLOBAL HYPERTEXT INTERFACE
 Номер редакции: первоначальный оконченный черновик
 Заглавие:       Фидонетовские аватары
 Автор:          Mithgol the Webmaster   (aka Sergey Sokoloff, 2:50/88)
-Дата редакции:  9 Jan 2017
+Дата редакции:  10 Jan 2017
 -+--------------------------------------------------------------------
 Содержание:
    1. Статус этого документа
@@ -349,6 +349,8 @@ FGHI                                FIDONET GLOBAL HYPERTEXT INTERFACE
   https://github.com/Mithgol/node-fidonet-jam
 
   Реализации на уровне приложений, написанных автором стандарта:
+
+  *) Fido2RSS https://github.com/Mithgol/fido2rss
 
   *) fido2twi https://github.com/Mithgol/node-fido2twi
 
