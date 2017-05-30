@@ -26,6 +26,7 @@ Icon?
 
 # Node.js modules
 node_modules
+package-lock.json
 
 # NPM error logs
 npm-debug.log
