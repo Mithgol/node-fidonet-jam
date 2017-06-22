@@ -4,7 +4,7 @@ var extend = require('extend');
 var iconv = require('iconv-lite');
 var moment = require('moment');
 
-function getSubfieldTypeFromLoID(LoID){
+var getSubfieldTypeFromLoID = LoID => {
    /* jshint indent: false */
    switch( LoID ){
       case 0: return 'OADDRESS'; //break;
@@ -29,7 +29,7 @@ function getSubfieldTypeFromLoID(LoID){
       case 2004: return 'TZUTCINFO'; //break;
       default: return 'UNKNOWN'; //break;
    }
-}
+};
 
 var JAM = function(echoPath){
    if (!(this instanceof JAM)) return new JAM(echoPath);
@@ -50,14 +50,13 @@ JAM.prototype.crc32 = function(inString, options){
       options = {};
    } else options = extend({}, options);
 
-   if( !options.keepCase ){
-      inString = inString.replace(/[A-Z]/g, function(upperChar){
-         return upperChar.toLowerCase();
-      });
-   }
-   if(!( iconv.encodingExists(options.encoding) )){
-      options.encoding = 'utf8';
-   }
+   if( !options.keepCase ) inString = inString.replace(
+      /[A-Z]/g, upperChar => upperChar.toLowerCase()
+   );
+
+   if(!(
+      iconv.encodingExists(options.encoding)
+   )) options.encoding = 'utf8';
 
    var inBuf = iconv.encode(inString, options.encoding);
    // 4294967295 is the maximum 32-bit integer
@@ -68,8 +67,8 @@ JAM.prototype.readJHR = function(callback){ // (err)
    var _JAM = this;
    if (_JAM.JHR !== null) return callback(null);
 
-   fs.readFile(_JAM.echoPath+'.jhr', function(err, data){
-      if (err) return callback(err);
+   fs.readFile(_JAM.echoPath+'.jhr', (err, data) => {
+      if( err ) return callback(err);
 
       _JAM.JHR = data;
       callback(null);
@@ -80,8 +79,8 @@ JAM.prototype.readJDT = function(callback){ // (err)
    var _JAM = this;
    if (_JAM.JDT !== null) return callback(null);
 
-   fs.readFile(_JAM.echoPath+'.jdt', function(err, data){
-      if (err) return callback(err);
+   fs.readFile(_JAM.echoPath+'.jdt', (err, data) => {
+      if( err ) return callback(err);
 
       _JAM.JDT = data;
       callback(null);
@@ -92,8 +91,8 @@ JAM.prototype.readJDX = function(callback){ // (err)
    var _JAM = this;
    if (_JAM.indexStructure !== null) return callback(null);
 
-   fs.readFile(_JAM.echoPath+'.jdx', function(err, data){
-      if (err) return callback(err);
+   fs.readFile(_JAM.echoPath+'.jdx', (err, data) => {
+      if( err ) return callback(err);
 
       var indexOffset = 0;
       var MessageNum0 = 0;
@@ -123,8 +122,8 @@ JAM.prototype.readJLR = function(callback){ // (err)
    var _JAM = this;
    if (_JAM.lastreads !== null) return callback(null);
 
-   fs.readFile(_JAM.echoPath+'.jlr', function(err, data){
-      if (err) return callback(err);
+   fs.readFile(_JAM.echoPath+'.jlr', (err, data) => {
+      if( err ) return callback(err);
 
       var jlrOffset = 0;
       var nextUserCRC;  // ulong (4 bytes) 32-bit
@@ -196,13 +195,13 @@ JAM.prototype.readFixedHeaderInfoStruct = function(callback){ // err, struct
    var _JAM = this;
    if (_JAM.fixedHeader !== null) return callback(null);
 
-   _JAM.readJHR(function(err){
-      if (err) return callback(err);
+   _JAM.readJHR(err => {
+      if( err ) return callback(err);
 
       var offsetJHR = 0;
       var FixedHeaderInfoStruct = {};
 
-      FixedHeaderInfoStruct.Signature = new Buffer(4);
+      FixedHeaderInfoStruct.Signature = Buffer.allocUnsafe(4);
       _JAM.JHR.copy(FixedHeaderInfoStruct.Signature, 0, 0, 4);
       offsetJHR += 4;
 
@@ -238,20 +237,20 @@ JAM.prototype.indexLastRead = function(username, encoding, callback){//err,idx
    }
 
    var _JAM = this;
-   _JAM.readJLR(function(err){
-      if (err) return callback(err);
+   _JAM.readJLR(err => {
+      if( err ) return callback(err);
       var findCRC = _JAM.crc32(username, {encoding: encoding});
-      var foundItems = _JAM.lastreads.filter(function(element){
-         return element.UserCRC === findCRC;
-      });
+      var foundItems = _JAM.lastreads.filter(
+         element => element.UserCRC === findCRC
+      );
       if( foundItems.length < 1 ) return callback(null, null);
       var foundLastRead = foundItems[0].LastRead;
       foundItems = null;
 
-      _JAM.readFixedHeaderInfoStruct(function(err){
-         if (err) return callback(err);
-         _JAM.readJDX(function(err){
-            if (err) return callback(err);
+      _JAM.readFixedHeaderInfoStruct(err => {
+         if( err ) return callback(err);
+         _JAM.readJDX(err => {
+            if( err ) return callback(err);
 
             var nextIDX = _JAM.size() - 1;
             while( nextIDX > 0 ){
@@ -275,19 +274,19 @@ JAM.prototype.readHeader = function(number, callback){ // err, struct
       return callback(new Error(this.errors.NOT_A_POSITIVE));
    }
 
-   _JAM.readJDX(function(err){
-      if (err) return callback(err);
+   _JAM.readJDX(err => {
+      if( err ) return callback(err);
       if( number > _JAM.size() ){
          return callback(new Error(this.errors.TOO_BIG));
       }
 
-      _JAM.readJHR(function(err){
-         if (err) return callback(err);
+      _JAM.readJHR(err => {
+         if( err ) return callback(err);
 
          var header = {};
          var offsetJHR = _JAM.indexStructure[number-1].offset;
 
-         header.Signature = new Buffer(4);
+         header.Signature = Buffer.allocUnsafe(4);
          _JAM.JHR.copy(header.Signature, 0, offsetJHR, offsetJHR+4);
          offsetJHR += 4;
 
@@ -343,7 +342,7 @@ JAM.prototype.readHeader = function(number, callback){ // err, struct
             subfield.datlen = _JAM.JHR.readUInt32LE(offsetJHR);
             offsetJHR += 4; //ulong
 
-            subfield.Buffer = new Buffer(subfield.datlen);
+            subfield.Buffer = Buffer.allocUnsafe(subfield.datlen);
             _JAM.JHR.copy(
                subfield.Buffer, 0, offsetJHR, offsetJHR+subfield.datlen
             );
@@ -359,7 +358,7 @@ JAM.prototype.readHeader = function(number, callback){ // err, struct
    });
 };
 
-var normalizedEncoding = function(encoding){
+var normalizedEncoding = encoding => {
    /* jshint indent: false */
    switch(encoding){
       case '+7_fido':    return 'cp866';   //break
@@ -371,11 +370,11 @@ var normalizedEncoding = function(encoding){
 };
 
 JAM.prototype.encodingFromHeader = function(header){
-   var kludges = header.Subfields.filter(function(subfield){
-      return subfield.LoID === 2000; // FTSKLUDGE
-   }).map(function(kludgeField){
-      return kludgeField.Buffer.toString('ascii').toLowerCase();
-   });
+   var kludges = header.Subfields.filter(
+      subfield => subfield.LoID === 2000 // FTSKLUDGE
+   ).map(
+      kludgeField => kludgeField.Buffer.toString('ascii').toLowerCase()
+   );
 
    for( var i = 0; i < kludges.length; i++ ){
       var parts = /^(?:chrs|charset):\s*(\S+)(\s.*)?$/.exec(kludges[i]);
@@ -423,39 +422,31 @@ JAM.prototype.decodeHeader = function(header, decodeOptions){
    decoded.procTime[1]++;
    decoded.kludges = [];
 
-   for( var i = 0; i < header.Subfields.length; i++ ){
-      switch( header.Subfields[i].LoID ){
+   header.Subfields.forEach(nextSubfield => {
+      switch( nextSubfield.LoID ){
          case 0: // OADDRESS
-            decoded.origAddr = iconv.decode(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.origAddr = iconv.decode(nextSubfield.Buffer, encoding);
          break;
          case 1: // DADDRESS
-            decoded.toAddr = iconv.decode(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.toAddr = iconv.decode(nextSubfield.Buffer, encoding);
          break;
          case 2: // SENDERNAME
-            decoded.from = iconv.decode(header.Subfields[i].Buffer, encoding);
+            decoded.from = iconv.decode(nextSubfield.Buffer, encoding);
          break;
          case 3: // RECEIVERNAME
-            decoded.to = iconv.decode(header.Subfields[i].Buffer, encoding);
+            decoded.to = iconv.decode(nextSubfield.Buffer, encoding);
          break;
          case 4: // MSGID
-            decoded.msgid = iconv.decode(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.msgid = iconv.decode(nextSubfield.Buffer, encoding);
          break;
          case 5: // REPLYID
-            decoded.replyid = iconv.decode(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.replyid = iconv.decode(nextSubfield.Buffer, encoding);
          break;
          case 6: // SUBJECT
-            decoded.subj = iconv.decode(header.Subfields[i].Buffer, encoding);
+            decoded.subj = iconv.decode(nextSubfield.Buffer, encoding);
          break;
          case 7: // PID
-            decoded.pid = iconv.decode(header.Subfields[i].Buffer, encoding);
+            decoded.pid = iconv.decode(nextSubfield.Buffer, encoding);
          break;
          /*
          case 8: return 'TRACE'; //break;
@@ -467,28 +458,22 @@ JAM.prototype.decodeHeader = function(header, decodeOptions){
          case 1000: return 'EMBINDAT'; //break;
          */
          case 2000: // FTSKLUDGE
-            decoded.kludges.push(
-               iconv.decode(header.Subfields[i].Buffer, encoding)
-            );
+            decoded.kludges.push(iconv.decode(nextSubfield.Buffer, encoding));
          break;
          case 2001: // SEENBY2D
-            decoded.seenby = iconv.decode(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.seenby = iconv.decode(nextSubfield.Buffer, encoding);
          break;
          case 2002: // PATH2D
-            decoded.path = iconv.decode(header.Subfields[i].Buffer, encoding);
+            decoded.path = iconv.decode(nextSubfield.Buffer, encoding);
          break;
          /*
          case 2003: return 'FLAGS'; //break;
          */
          case 2004: // TZUTCINFO
-            decoded.timezone = iconv.decode(
-               header.Subfields[i].Buffer, encoding
-            );
+            decoded.timezone = iconv.decode(nextSubfield.Buffer, encoding);
          break;
       }
-   }
+   });
    return decoded;
 };
 
@@ -507,35 +492,35 @@ JAM.prototype.decodeKludges = function(header, decodeOptions){
 
    var kludges = [];
 
-   for( var i = 0; i < header.Subfields.length; i++ ){
-      switch( header.Subfields[i].LoID ){
+   header.Subfields.forEach(nextSubfield => {
+      switch( nextSubfield.LoID ){
          case 4: // MSGID
             kludges.push(
-               'MSGID: ' + iconv.decode(header.Subfields[i].Buffer, encoding)
+               'MSGID: ' + iconv.decode(nextSubfield.Buffer, encoding)
             );
          break;
          case 5: // REPLYID
             kludges.push(
-               'REPLY: ' + iconv.decode(header.Subfields[i].Buffer, encoding)
+               'REPLY: ' + iconv.decode(nextSubfield.Buffer, encoding)
             );
          break;
          case 7: // PID
             kludges.push(
-               'PID: ' + iconv.decode(header.Subfields[i].Buffer, encoding)
+               'PID: ' + iconv.decode(nextSubfield.Buffer, encoding)
             );
          break;
          case 2000: // FTSKLUDGE
             kludges.push(
-               iconv.decode(header.Subfields[i].Buffer, encoding)
+               iconv.decode(nextSubfield.Buffer, encoding)
             );
          break;
          case 2004: // TZUTCINFO
             kludges.push(
-               'TZUTC: ' + iconv.decode(header.Subfields[i].Buffer, encoding)
+               'TZUTC: ' + iconv.decode(nextSubfield.Buffer, encoding)
             );
          break;
       }
-   }
+   });
    return kludges.join('\n');
 };
 
@@ -557,8 +542,8 @@ JAM.prototype.decodeMessage = function(header, decodeOptions, callback){
       return callback(new Error(this.errors.UNKNOWN_ENCODING));
    }
 
-   _JAM.readJDT(function(err){
-      if (err) return callback(err);
+   _JAM.readJDT(err => {
+      if( err ) return callback(err);
 
       callback(null, iconv.decode(
          _JAM.JDT.slice(header.Offset, header.Offset + header.TxtLen),
@@ -569,26 +554,26 @@ JAM.prototype.decodeMessage = function(header, decodeOptions, callback){
 
 JAM.prototype.readAllHeaders = function(callback){ // err, messageHeaders
    var _JAM = this;
-   _JAM.readJDX(function(err){
-      if (err) return callback(err);
+   _JAM.readJDX(err => {
+      if( err ) return callback(err);
 
       var baseSize = _JAM.size();
 
-      _JAM.readFixedHeaderInfoStruct(function(err){
-         if (err) return callback(err);
+      _JAM.readFixedHeaderInfoStruct(err => {
+         if( err ) return callback(err);
 
          var messageHeaders = [];
          var nextHeaderNumber = 0;
 
-         var nextHeaderProcessor = function(){
+         var nextHeaderProcessor = () => {
             if( nextHeaderNumber >= baseSize ){
                // all headers are processed
                return callback(null, messageHeaders);
             }
             // process the next header
             nextHeaderNumber++;
-            _JAM.readHeader(nextHeaderNumber, function(err, nextHeader){
-               if(err) return callback(err);
+            _JAM.readHeader(nextHeaderNumber, (err, nextHeader) => {
+               if( err ) return callback(err);
 
                messageHeaders.push( nextHeader );
                setImmediate(nextHeaderProcessor);
@@ -612,10 +597,10 @@ JAM.prototype.numbersForMSGID = function(
 
    var _JAM = this;
    _JAM.readAllHeaders(function(err, messageHeaders){
-      if (err) return callback(err);
+      if( err ) return callback(err);
 
       var encodingToCRC = {};
-      var resultArray = messageHeaders.map(function(hdr, idx){
+      var resultArray = messageHeaders.map((hdr, idx) => {
          var checkEncoding = _JAM.encodingFromHeader(hdr);
          if( checkEncoding === null ) checkEncoding = options.defaultEncoding;
          if(
@@ -630,18 +615,16 @@ JAM.prototype.numbersForMSGID = function(
 
          var checkCRC = encodingToCRC[checkEncoding];
          if( typeof checkCRC === 'undefined' ){
-            checkCRC = MSGID.map(function(someMSGID){
-               return _JAM.crc32(someMSGID, {encoding: checkEncoding});
-            });
+            checkCRC = MSGID.map(
+               someMSGID => _JAM.crc32(someMSGID, {encoding: checkEncoding})
+            );
             encodingToCRC[checkEncoding] = checkCRC;
          }
 
-         if( checkCRC.indexOf(hdr.MSGIDcrc) > -1 ) return idx+1;
+         if( checkCRC.includes(hdr.MSGIDcrc) ) return idx+1;
 
          return null;
-      }).filter(function(number){
-         return number !== null;
-      });
+      }).filter(number => number !== null);
 
       callback(null, resultArray);
    });
@@ -658,11 +641,11 @@ JAM.prototype.headersForMSGID = function(
    var options = extend({}, decodeDefaults, decodeOptions);
 
    var _JAM = this;
-   _JAM.readAllHeaders(function(err, messageHeaders){
-      if (err) return callback(err);
+   _JAM.readAllHeaders((err, messageHeaders) => {
+      if( err ) return callback(err);
 
       var encodingToCRC = {};
-      var headersArray = messageHeaders.map(function(hdr, idx){
+      var headersArray = messageHeaders.map((hdr, idx) => {
          var checkEncoding = _JAM.encodingFromHeader(hdr);
          if( checkEncoding === null ) checkEncoding = options.defaultEncoding;
          if(
@@ -677,19 +660,17 @@ JAM.prototype.headersForMSGID = function(
 
          var checkCRC = encodingToCRC[checkEncoding];
          if( typeof checkCRC === 'undefined' ){
-            checkCRC = MSGID.map(function(someMSGID){
-               return _JAM.crc32(someMSGID, {encoding: checkEncoding});
-            });
+            checkCRC = MSGID.map(
+               someMSGID => _JAM.crc32(someMSGID, {encoding: checkEncoding})
+            );
             encodingToCRC[checkEncoding] = checkCRC;
          }
 
-         if( checkCRC.indexOf(hdr.MSGIDcrc) > -1 ){
+         if( checkCRC.includes(hdr.MSGIDcrc) ){
             hdr.MessageIndex = idx+1;
             return hdr;
          } else return null;
-      }).filter(function(header){
-         return header !== null;
-      });
+      }).filter(header => header !== null);
 
       callback(null, headersArray);
    });
@@ -697,20 +678,20 @@ JAM.prototype.headersForMSGID = function(
 
 JAM.prototype.getParentNumber = function(number, callback){//err, parentNumber
    var _JAM = this;
-   _JAM.readHeader(number, function(err, header){
-      if (err) return callback(err);
+   _JAM.readHeader(number, (err, header) => {
+      if( err ) return callback(err);
 
       var replyTo = header.ReplyTo;
 
-      _JAM.readFixedHeaderInfoStruct(function(err){
-         if (err) return callback(err);
+      _JAM.readFixedHeaderInfoStruct(err => {
+         if( err ) return callback(err);
 
          var basemsgnum = _JAM.fixedHeader.basemsgnum;
          if( replyTo < basemsgnum ) return callback(null, null);
 
-         var idx0 = _JAM.indexStructure.map(function(indexItem){
-            return indexItem.MessageNum0;
-         }).indexOf(replyTo - basemsgnum);
+         var idx0 = _JAM.indexStructure.map(
+            indexItem => indexItem.MessageNum0
+         ).indexOf(replyTo - basemsgnum);
 
          if( idx0 < 0 ) return callback(null, null);
          return callback(null, idx0+1);
@@ -720,20 +701,20 @@ JAM.prototype.getParentNumber = function(number, callback){//err, parentNumber
 
 JAM.prototype.get1stChildNumber = function(number, callback){//err,childNumber
    var _JAM = this;
-   _JAM.readHeader(number, function(err, header){
-      if (err) return callback(err);
+   _JAM.readHeader(number, (err, header) => {
+      if( err ) return callback(err);
 
       var reply1st = header.Reply1st;
 
-      _JAM.readFixedHeaderInfoStruct(function(err){
-         if (err) return callback(err);
+      _JAM.readFixedHeaderInfoStruct(err => {
+         if( err ) return callback(err);
 
          var basemsgnum = _JAM.fixedHeader.basemsgnum;
          if( reply1st < basemsgnum ) return callback(null, null);
 
-         var idx0 = _JAM.indexStructure.map(function(indexItem){
-            return indexItem.MessageNum0;
-         }).indexOf(reply1st - basemsgnum);
+         var idx0 = _JAM.indexStructure.map(
+            indexItem => indexItem.MessageNum0
+         ).indexOf(reply1st - basemsgnum);
 
          if( idx0 < 0 ) return callback(null, null);
          return callback(null, idx0+1);
@@ -743,20 +724,20 @@ JAM.prototype.get1stChildNumber = function(number, callback){//err,childNumber
 
 JAM.prototype.getNextChildNumber = function(number,callback){//err,childNumber
    var _JAM = this;
-   _JAM.readHeader(number, function(err, header){
-      if (err) return callback(err);
+   _JAM.readHeader(number, (err, header) => {
+      if( err ) return callback(err);
 
       var replyNext = header.ReplyNext;
 
-      _JAM.readFixedHeaderInfoStruct(function(err){
-         if (err) return callback(err);
+      _JAM.readFixedHeaderInfoStruct(err => {
+         if( err ) return callback(err);
 
          var basemsgnum = _JAM.fixedHeader.basemsgnum;
          if( replyNext < basemsgnum ) return callback(null, null);
 
-         var idx0 = _JAM.indexStructure.map(function(indexItem){
-            return indexItem.MessageNum0;
-         }).indexOf(replyNext - basemsgnum);
+         var idx0 = _JAM.indexStructure.map(
+            indexItem => indexItem.MessageNum0
+         ).indexOf(replyNext - basemsgnum);
 
          if( idx0 < 0 ) return callback(null, null);
          return callback(null, idx0+1);
@@ -766,17 +747,15 @@ JAM.prototype.getNextChildNumber = function(number,callback){//err,childNumber
 
 JAM.prototype.getChildrenNumbers = function(number, callback){//err, numbers
    var _JAM = this;
-   _JAM.get1stChildNumber(number, function(err, childNumber1){
-      if (err) return callback(err);
-      if( childNumber1 === null ){
-         return callback(null, []);
-      }
+   _JAM.get1stChildNumber(number, (err, childNumber1) => {
+      if( err ) return callback(err);
+      if( childNumber1 === null ) return callback(null, []);
 
       var collectedNumbers = [ childNumber1 ];
 
-      var tryNextNumber = function(thisNumber){
-         _JAM.getNextChildNumber(thisNumber, function(err, nextChildNumber){
-            if (err) return callback(err);
+      var tryNextNumber = thisNumber => {
+         _JAM.getNextChildNumber(thisNumber, (err, nextChildNumber) => {
+            if( err ) return callback(err);
             if( nextChildNumber === null ){
                return callback(null, collectedNumbers);
             }
@@ -800,19 +779,17 @@ JAM.prototype.getAvatarsForHeader = function(header, schemes, avatarOptions){
    };
    var options = extend({}, decodeDefaults, gravatarDefaults, avatarOptions);
 
-   schemes = schemes.map(function(scheme){
-      return scheme.toLowerCase();
-   });
-   var findHTTPS = schemes.indexOf('https') > -1;
-   var findHTTP  = schemes.indexOf('http')  > -1;
-   var findFREQ  = schemes.indexOf('freq')  > -1;
+   schemes = schemes.map( scheme => scheme.toLowerCase() );
+   var findHTTPS = schemes.includes('https');
+   var findHTTP  = schemes.includes('http');
+   var findFREQ  = schemes.includes('freq');
 
    var regularAvatars = [];
    var gravatars = [];
    var avatarsGIF = [];
 
    var decoded = _JAM.decodeHeader( header, options );
-   decoded.kludges.forEach(function(kludge){
+   decoded.kludges.forEach(kludge => {
       var matches;
       var regex;
       var avatarURL;
@@ -822,9 +799,7 @@ JAM.prototype.getAvatarsForHeader = function(header, schemes, avatarOptions){
       if( matches !== null ){
          avatarURL = matches[1];
          var avatarScheme = matches[2];
-         if( schemes.indexOf(avatarScheme) > -1 ){
-            regularAvatars.push(avatarURL);
-         }
+         if( schemes.includes(avatarScheme) ) regularAvatars.push(avatarURL);
          return;
       }
 
@@ -878,9 +853,7 @@ JAM.prototype.getOrigAddr = function(
 
    var decoded = _JAM.decodeHeader( header, options );
    if( typeof decoded.origAddr !== 'undefined' ){
-      setImmediate(function(){
-         callback(null, decoded.origAddr);
-      });
+      setImmediate( () => callback(null, decoded.origAddr) );
       return;
    }
 
@@ -889,14 +862,12 @@ JAM.prototype.getOrigAddr = function(
          /^([0-9]+:[0-9]+\/[0-9]+(?:\.[0-9]+)?(?:@[A-Za-z0-9]+)?)\s+/;
       var matchesMSGID = reMSGID.exec( decoded.msgid );
       if( matchesMSGID !== null ){
-         setImmediate(function(){
-            callback(null, matchesMSGID[1]);
-         });
+         setImmediate( () => callback(null, matchesMSGID[1]) );
          return;
       }
    }
 
-   _JAM.decodeMessage(header, options, function(err, messageText){
+   _JAM.decodeMessage(header, options, (err, messageText) => {
       /* jshint maxlen: false */
       if( err ) return callback(err);
 
