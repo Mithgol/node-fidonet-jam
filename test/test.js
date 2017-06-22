@@ -10,20 +10,20 @@ var headSampleMSGID = '2:5063/88 504b3fb5';
 var parentSample = 768;
 var childrenSamples = [769, 770, 771, 772];
 
-describe('Fidonet JAM', function(){
+describe('Fidonet JAM', () => {
    var blog = JAM( path.join(__dirname, 'BLOG-MTW') );
 
-   it('calculates correct JAM CRC-32 of an empty string', function(){
+   it('calculates correct JAM CRC-32 of an empty string', () => {
       assert.equal(blog.crc32(''), 4294967295);
    });
 
-   it('calculates correct JAM CRC-32 of the string "Mithgol the Webmaster"',
-   function(){
-      assert.equal(blog.crc32('Mithgol the Webmaster'), 0x5b12347c);
-   });
+   it(
+      'calculates correct JAM CRC-32 of the string "Mithgol the Webmaster"',
+      () => assert.equal(blog.crc32('Mithgol the Webmaster'), 0x5b12347c)
+   );
 
-   it('reads lastreads, can clear the cache afterwards', function(done){
-      blog.readJLR(function(err){
+   it('reads lastreads, can clear the cache afterwards', done => {
+      blog.readJLR(err => {
          if (err) throw err;
 
          assert.equal(blog.lastreads.length, 1);
@@ -37,8 +37,8 @@ describe('Fidonet JAM', function(){
          done();
       });
    });
-   it('reads index, can clear the cache afterwards', function(done){
-      blog.readJDX(function(err){
+   it('reads index, can clear the cache afterwards', done => {
+      blog.readJDX(err => {
          if (err) throw err;
 
          assert.equal(blog.size(), headCount);
@@ -50,8 +50,8 @@ describe('Fidonet JAM', function(){
          done();
       });
    });
-   it('reads the fixed header and also can clear the cache', function(done){
-      blog.readFixedHeaderInfoStruct(function(err){
+   it('reads the fixed header and also clears the cache afterwards', done => {
+      blog.readFixedHeaderInfoStruct(err => {
          if (err) throw err;
 
          assert.equal(blog.fixedHeader.activemsgs, headCount);
@@ -66,12 +66,12 @@ describe('Fidonet JAM', function(){
          done();
       });
    });
-   it('correctly calculates the last read position', function(done){
-      blog.indexLastRead('Mithgol the Webmaster', function(err, idx){
+   it('correctly calculates the last read position', done => {
+      blog.indexLastRead('Mithgol the Webmaster', (err, idx) => {
          if (err) throw err;
          assert.equal(idx, 9150);
 
-         blog.indexLastRead('some unknown user', function(err, idx){
+         blog.indexLastRead('some unknown user', (err, idx) => {
             if (err) throw err;
             assert.equal(idx, null);
 
@@ -81,8 +81,8 @@ describe('Fidonet JAM', function(){
    });
    it('reads the '+headSampleth+
       ' header, its encoding and contents, clears cache',
-   function(done){
-      blog.readHeader(headSample, function(err, header){
+   done => {
+      blog.readHeader(headSample, (err, header) => {
          if (err) throw err;
 
          console.log('\nThe '+headSampleth+' header:');
@@ -93,7 +93,7 @@ describe('Fidonet JAM', function(){
             blog.decodeHeader(header), false, Infinity, true
          ));
 
-         header.Subfields.forEach(function(subfield){
+         header.Subfields.forEach(subfield => {
             if( subfield.type === 'MSGID' ){
                assert.equal(
                   blog.crc32( subfield.Buffer.toString('binary'), true ),
@@ -111,7 +111,7 @@ describe('Fidonet JAM', function(){
          console.log('\nKludges of the '+headSampleth+' header:');
          console.log( blog.decodeKludges(header) );
 
-         blog.decodeMessage(header, function(err, messageText){
+         blog.decodeMessage(header, (err, messageText) => {
             if (err) throw err;
 
             console.log('\nThe '+headSampleth+' message (decoded):');
@@ -121,10 +121,7 @@ describe('Fidonet JAM', function(){
             console.log('The '+headSampleth+' message (output):');
             console.log(messageText);
 
-            assert.notDeepEqual(
-               messageText.indexOf('\n\n\nЭто знакъ.\n\n\n'),
-               -1
-            );
+            assert.ok( messageText.includes('\n\n\nЭто знакъ.\n\n\n') );
 
             assert.notEqual(blog.JDT, null);
             assert.notEqual(blog.JHR, null);
@@ -141,36 +138,36 @@ describe('Fidonet JAM', function(){
          });
       });
    });
-   it('reads '+headCount+' headers from the message base', function(done){
-      blog.readAllHeaders(function(err, messageHeaders){
+   it('reads '+headCount+' headers from the message base', done => {
+      blog.readAllHeaders((err, messageHeaders) => {
          if (err) throw err;
 
          assert.equal(messageHeaders.length, headCount);
          done();
       });
    });
-   it('MessageNum0 + basemsgnum === MessageNumber everywhere', function(done){
-      blog.readAllHeaders(function(err, messageHeaders){
+   it('MessageNum0 + basemsgnum === MessageNumber everywhere', done => {
+      blog.readAllHeaders((err, messageHeaders) => {
          if (err) throw err;
 
-         messageHeaders.forEach(function(currentHeader, headerIDX){
-            assert.strictEqual(
+         messageHeaders.forEach(
+            (currentHeader, headerIDX) => assert.strictEqual(
                blog.indexStructure[headerIDX].MessageNum0 +
                blog.fixedHeader.basemsgnum,
                currentHeader.MessageNumber
-            );
-         });
+            )
+         );
          done();
       });
    });
-   it('original addresses are available everywhere', function(done){
-      blog.readAllHeaders(function(err, messageHeaders){
+   it('original addresses are available everywhere', done => {
+      blog.readAllHeaders((err, messageHeaders) => {
          if (err) throw err;
 
          var headerIDX = 0;
-         var headerNextStep = function(){
+         var headerNextStep = () => {
             var currentHeader = messageHeaders[headerIDX];
-            blog.getOrigAddr(currentHeader, function(err, origAddr){
+            blog.getOrigAddr(currentHeader, (err, origAddr) => {
                if (err) throw err;
 
                assert.notStrictEqual(origAddr, null);
@@ -186,19 +183,19 @@ describe('Fidonet JAM', function(){
          headerNextStep();
       });
    });
-   it('the cache is cleared, then a MSGID search is correct', function(done){
+   it('the cache is cleared, then a MSGID search is correct', done => {
       blog.clearCache();
-      blog.numbersForMSGID(headSampleMSGID, function(err, arr){
+      blog.numbersForMSGID(headSampleMSGID, (err, arr) => {
          if (err) throw err;
          assert.deepEqual(arr, [headSample]);
 
          blog.numbersForMSGID([
             headSampleMSGID, 'some wrong MSGID'
-         ], function(err, arr){
+         ], (err, arr) => {
             if (err) throw err;
             assert.deepEqual(arr, [headSample]);
 
-            blog.numbersForMSGID('some wrong MSGID', function(err, arr){
+            blog.numbersForMSGID('some wrong MSGID', (err, arr) => {
                if (err) throw err;
                assert.deepEqual(arr, []);
                done();
@@ -206,22 +203,22 @@ describe('Fidonet JAM', function(){
          });
       });
    });
-   it('a MSGID search for a header is also correct', function(done){
-      blog.readHeader(headSample, function(err, header){
+   it('a MSGID search for a header is also correct', done => {
+      blog.readHeader(headSample, (err, header) => {
          if (err) throw err;
          header.MessageIndex = headSample;
 
-         blog.headersForMSGID(headSampleMSGID, function(err, arr){
+         blog.headersForMSGID(headSampleMSGID, (err, arr) => {
             if (err) throw err;
             assert.deepEqual(arr, [header]);
 
             blog.headersForMSGID([
                headSampleMSGID, 'some wrong MSGID'
-            ], function(err, arr){
+            ], (err, arr) => {
                if (err) throw err;
                assert.deepEqual(arr, [header]);
 
-               blog.headersForMSGID('some wrong MSGID', function(err, arr){
+               blog.headersForMSGID('some wrong MSGID', (err, arr) => {
                   if (err) throw err;
                   assert.deepEqual(arr, []);
                   done();
@@ -230,33 +227,33 @@ describe('Fidonet JAM', function(){
          });
       });
    });
-   it('gets the correct number of the parent', function(done){
-      blog.getParentNumber(childrenSamples[1], function(err, parentNumber){
+   it('gets the correct number of the parent', done => {
+      blog.getParentNumber(childrenSamples[1], (err, parentNumber) => {
          if (err) throw err;
          assert.equal(parentNumber, parentSample);
          done();
       });
    });
-   it('gets the correct number of the 1st child', function(done){
-      blog.get1stChildNumber(parentSample, function(err, childNumber){
+   it('gets the correct number of the 1st child', done => {
+      blog.get1stChildNumber(parentSample, (err, childNumber) => {
          if (err) throw err;
          assert.equal(childNumber, childrenSamples[0]);
          done();
       });
    });
-   it('gets the correct number of the next child', function(done){
-      blog.getNextChildNumber(childrenSamples[2], function(err,siblingNumber){
+   it('gets the correct number of the next child', done => {
+      blog.getNextChildNumber(childrenSamples[2], (err,siblingNumber) => {
          if (err) throw err;
          assert.equal(siblingNumber, childrenSamples[3]);
          done();
       });
    });
-   it('gets the correct lists of children', function(done){
-      blog.getChildrenNumbers(parentSample, function(err, childrenNumbers){
+   it('gets the correct lists of children', done => {
+      blog.getChildrenNumbers(parentSample, (err, childrenNumbers) => {
          if (err) throw err;
          assert.deepEqual(childrenNumbers, childrenSamples);
 
-         blog.getChildrenNumbers(headSample, function(err, childrenNumbers){
+         blog.getChildrenNumbers(headSample, (err, childrenNumbers) => {
             if (err) throw err;
             assert.deepEqual(childrenNumbers, []);
             done();
