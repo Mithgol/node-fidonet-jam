@@ -272,7 +272,7 @@ Uses the encoding (determined by `.encodingFromHeader(header)`) to decode stri
 
 * If `.encodingFromHeader` returns `null`, `options.defaultEncoding` is used.
 
-* If `.encodingFromHeader` returns an unknown encoding (`Buffer.isEncoding()` returns `false` even after it is [extended](https://github.com/ashtuchkin/iconv-lite#extend-nodejs-own-encodings)), `options.defaultEncoding` is used if `options.useDefaultIfUnknown` is true. And if `options.defaultEncoding` is also an unknown encoding, an error is thrown.
+* If `.encodingFromHeader` returns an unknown encoding (the `encodingExists` method of [`iconv-lite`](https://github.com/ashtuchkin/iconv-lite/) returns `false` for that encoding), `options.defaultEncoding` is used if `options.useDefaultIfUnknown` is true. And if `options.defaultEncoding` is also an unknown encoding, an error is thrown.
 
 The default values of `options`:
 
@@ -339,7 +339,7 @@ Using the given header, reads the text of the corresponding message (calling 
 
 * If `.encodingFromHeader` returns `null`, `options.defaultEncoding` is used.
 
-* If `.encodingFromHeader` returns an unknown encoding (`Buffer.isEncoding()` returns `false` even after it is [extended](https://github.com/ashtuchkin/iconv-lite#extend-nodejs-own-encodings)), `options.defaultEncoding` is used if `options.useDefaultIfUnknown` is true. And if `options.defaultEncoding` is also an unknown encoding, an error is thrown.
+* If `.encodingFromHeader` returns an unknown encoding (the `encodingExists` method of [`iconv-lite`](https://github.com/ashtuchkin/iconv-lite/) returns `false` for that encoding), `options.defaultEncoding` is used if `options.useDefaultIfUnknown` is true. And if `options.defaultEncoding` is also an unknown encoding, an error is thrown.
 
 The default values of `options`:
 
@@ -388,7 +388,7 @@ When a non-ASCII MSGID is decoded, an optional `options` parameter is taken in
 
 * If `.encodingFromHeader` returns `null`, `options.defaultEncoding` is used.
 
-* If `.encodingFromHeader` returns an unknown encoding (`Buffer.isEncoding()` returns `false` even after it is [extended](https://github.com/ashtuchkin/iconv-lite#extend-nodejs-own-encodings)), `options.defaultEncoding` is used if `options.useDefaultIfUnknown` is true.
+* If `.encodingFromHeader` returns an unknown encoding (the `encodingExists` method of [`iconv-lite`](https://github.com/ashtuchkin/iconv-lite/) returns `false` for that encoding), `options.defaultEncoding` is used if `options.useDefaultIfUnknown` is true.
 
 * After that, if the encoding is still unknown, the default value of `options.defaultEncoding` is used. (That's `'cp866'`, see below.)
 
